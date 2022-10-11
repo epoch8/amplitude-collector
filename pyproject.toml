@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "amplitude-collector"
+version = "0.1.4"
+description = ""
+authors = ["Andrey Tatarinov <a@tatarinov.co>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+starlette = "^0.21.0"
+uvicorn = "^0.18.3"
+python-multipart = "^0.0.5"
+kafka-python = "^2.0.2"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^0.982"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
