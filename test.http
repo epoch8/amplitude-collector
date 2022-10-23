@@ -1,4 +1,7 @@
-OPTIONS http://localhost:8000/collect
+# @host = http://localhost:8000
+@host = https://collector-prod.perek.epoch8.ru
+
+OPTIONS {{host}}/collect
 authority: collector-test.perek.epoch8.ru
 accept: */*
 accept-language: en-US,en;q=0.9

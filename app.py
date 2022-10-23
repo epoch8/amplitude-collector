@@ -15,6 +15,8 @@ KAFKA_TOPIC = os.environ.get("KAFKA_TOPIC", "events")
 KAFKA_USERNAME = os.environ.get("KAFKA_USERNAME", "collector")
 KAFKA_PASSWORD = os.environ.get("KAFKA_PASSWORD", "")
 
+DEBUG = os.environ.get("DEBUG", "True") == "True"
+
 
 kafka_producer = KafkaProducer(
     bootstrap_servers=KAFKA_DSN,
@@ -33,12 +35,17 @@ async def index(request):
 async def collect(request):
     ct = request.headers.get("content-type", "")
     if ct.startswith("application/x-www-form-urlencoded"):
+        value = json.dumps((await request.form())._dict).encode("utf-8")
+
         kafka_producer.send(
             topic=KAFKA_TOPIC,
-            value=json.dumps((await request.form())._dict).encode("utf-8"),
+            value=value,
         )
 
-    return Response()
+        if DEBUG:
+            print(value)
+
+    return Response("success")
 
 
 app = Starlette(
