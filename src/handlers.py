@@ -1,7 +1,7 @@
 import logging
 
 from starlette.responses import Response
-
+from starlette import status
 from src.amplitude import AmplitudeRequestProcessor, RequestContentTypeError
 from src.kafka_producer import kafka_producer
 from src.config import KAFKA_TOPIC, DEBUG
@@ -21,6 +21,7 @@ async def collect(request):
         ).execute()
         if DEBUG:
             print(send_data)
+        return Response("success")
     except RequestContentTypeError as e:
         logger.error(str(e))
-    return Response("success")
+        return Response("unexpected content type", status_code=status.HTTP_400_BAD_REQUEST)
