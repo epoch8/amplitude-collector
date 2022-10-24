@@ -1,5 +1,5 @@
-import json
 import os
+import logging
 
 from kafka import KafkaProducer
 from starlette.applications import Starlette
@@ -7,6 +7,10 @@ from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import Response
 from starlette.routing import Route
+
+from amplitude import AmplitudeRequestProcessor, RequestContentTypeError
+
+logger = logging.getLogger(__name__)
 
 KAFKA_DSN = os.environ["KAFKA_DSN"]
 # KAFKA_USE_SSL = os.environ.get("KAFKA_USE_SSL")
@@ -33,18 +37,14 @@ async def index(request):
 
 
 async def collect(request):
-    ct = request.headers.get("content-type", "")
-    if ct.startswith("application/x-www-form-urlencoded"):
-        value = json.dumps((await request.form())._dict).encode("utf-8")
-
-        kafka_producer.send(
-            topic=KAFKA_TOPIC,
-            value=value,
-        )
-
+    try:
+        send_data = AmplitudeRequestProcessor(
+            request=request, producer=kafka_producer, topic=KAFKA_TOPIC
+        ).execute()
         if DEBUG:
-            print(value)
-
+            print(send_data)
+    except RequestContentTypeError as e:
+        logger.error(str(e))
     return Response("success")
 
 
