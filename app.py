@@ -40,8 +40,9 @@ async def collect(request):
         kafka_producer.send(
             topic=KAFKA_TOPIC,
             value=value,
+            key=b"event"
         )
-
+        kafka_producer.flush()
         if DEBUG:
             print(value)
 
