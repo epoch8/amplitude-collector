@@ -18,9 +18,9 @@ class AmplitudeRequestProcessor:
     def content_type(self) -> str:
         return self.request.headers.get("content-type", "")
 
-    def execute(self):
+    async def execute(self):
         if self.content_type == "application/x-www-form-urlencoded":
-            data = self._convert_form_data_to_json()
+            data = await self._convert_form_data_to_json()
         elif self.content_type == "application/json":
             data = await self.request.body()
         else:
