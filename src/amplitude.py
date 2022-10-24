@@ -22,7 +22,7 @@ class AmplitudeRequestProcessor:
         if self.content_type == "application/x-www-form-urlencoded":
             data = await self._convert_form_data_to_json()
         elif self.content_type == "application/json":
-            data = await self.request.body()
+            data = await self._convert_dict_to_json()
         else:
             raise RequestContentTypeError(f"unexpected content type: {self.content_type}")
 
@@ -38,3 +38,5 @@ class AmplitudeRequestProcessor:
         form_data = await self.request.form()
         return json.dumps(form_data._dict).encode("utf-8")
 
+    async def _convert_dict_to_json(self):
+        return json.dumps((await self.request.json())).encode("utf-8")
