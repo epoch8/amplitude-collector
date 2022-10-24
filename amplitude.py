@@ -29,7 +29,9 @@ class AmplitudeRequestProcessor:
         self.producer.send(
             topic=self.topic,
             value=data,
+            key=b"event"
         )
+        self.producer.flush()
         return data
 
     async def _convert_form_data_to_json(self):
