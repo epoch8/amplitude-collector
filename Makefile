@@ -7,7 +7,7 @@ requirements.txt:
 	poetry export --without dev > requirements.txt
 
 build: requirements.txt
-	docker build -t ${IMAGE}:${VERSION} --progress=plain --ssh default .
+	docker build -t ${IMAGE}:${VERSION} --progress=plain --ssh default --platform=linux/amd64 . 
 
 upload:
 	docker push ${IMAGE}:${VERSION}
