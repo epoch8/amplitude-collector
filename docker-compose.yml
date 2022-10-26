@@ -30,7 +30,7 @@ services:
   app:
     build:
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: tests/Dockerfile
     restart: always
     environment:
       KAFKA_DSN: redpanda:9092
