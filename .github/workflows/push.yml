@@ -10,4 +10,4 @@ jobs:
       - name: Build the stack
         run: docker-compose -f "docker-compose.yml" up -d --build
       - name: Test
-        run: docker exec app python -m pytest
+        run: docker-compose exec -T app pytest
