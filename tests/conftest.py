@@ -1,9 +1,10 @@
 from uuid import uuid4
+import json
 
 import pytest
 from starlette.testclient import TestClient
 from kafka.admin import KafkaAdminClient, ConfigResource
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer, KafkaProducer
 
 from src.app import app
 from src.config import KAFKA_TOPIC, KAFKA_DSN
@@ -26,6 +27,18 @@ def admin_client():
         resource_type='TOPIC', name=KAFKA_TOPIC, configs={"retention.ms": "60000"})
     )
     admin_client.alter_configs(topic_list)
+    yield
+
+
+@pytest.fixture(scope="function", autouse=True)
+def first_message():
+    KafkaProducer(
+        bootstrap_servers=KAFKA_DSN
+    ).send(
+            topic=KAFKA_TOPIC,
+            value=json.dumps({"id": str(uuid4()), "key": "test", "key2": 1}).encode("utf-8"),
+            key=b"event"
+        )
     yield
 
 
