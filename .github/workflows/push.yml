@@ -1,13 +1,6 @@
 name: actions-pytest
 
-on:
-  push:
-    branches:
-    - main
-    - features/**
-  pull_request:
-    branches:
-    - main
+on: [push]
 jobs:
   test:
     timeout-minutes: 10
