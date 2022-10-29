@@ -1,13 +1,13 @@
-from uuid import uuid4
 import json
+from uuid import uuid4
 
 import pytest
-from starlette.testclient import TestClient
-from kafka.admin import KafkaAdminClient, ConfigResource
 from kafka import KafkaConsumer, KafkaProducer
+from kafka.admin import ConfigResource, KafkaAdminClient
+from starlette.testclient import TestClient
 
 from src.app import app
-from src.config import KAFKA_TOPIC, KAFKA_DSN
+from src.config import KAFKA_DSN, KAFKA_TOPIC
 
 
 @pytest.fixture(scope="session")
