@@ -3,7 +3,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Route
 
-from src.handlers import index, collect
+from src.handlers import collect, index
 
 app = Starlette(
     debug=True,

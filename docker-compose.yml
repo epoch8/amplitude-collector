@@ -34,6 +34,7 @@ services:
     restart: always
     environment:
       KAFKA_DSN: redpanda:9092
+      KAFKA_USE_SSL: "False"
     volumes:
       - .:/usr/app
     container_name: app

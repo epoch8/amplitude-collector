@@ -1,8 +1,8 @@
 from kafka import KafkaProducer
 
-from src.config import DEBUG, KAFKA_DSN, KAFKA_PASSWORD, KAFKA_USERNAME
+from src.config import KAFKA_DSN, KAFKA_PASSWORD, KAFKA_USE_SSL, KAFKA_USERNAME
 
-if DEBUG:
+if not KAFKA_USE_SSL:
     kafka_producer = KafkaProducer(bootstrap_servers=KAFKA_DSN)
 else:
     kafka_producer = KafkaProducer(
