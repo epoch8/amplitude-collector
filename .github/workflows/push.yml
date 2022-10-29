@@ -1,0 +1,13 @@
+name: actions-pytest
+
+on: [push]
+jobs:
+  test:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build the stack
+        run: docker-compose -f "docker-compose.yml" up -d --build
+      - name: Test
+        run: docker-compose exec -T app pytest
