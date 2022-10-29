@@ -1,7 +1,7 @@
 import json
 
-from starlette.requests import Request
 from kafka.producer import KafkaProducer
+from starlette.requests import Request
 
 
 class RequestContentTypeError(ValueError):

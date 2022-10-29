@@ -1,10 +1,9 @@
 import json
 
-import pytest
 from starlette.testclient import TestClient
 
 
-def get_data_from_kafka(data: dict, kafka_consumer) -> bool:
+def get_data_from_kafka(data: dict, kafka_consumer):
     data_in_kafka = []
     msg_pack = kafka_consumer.poll(timeout_ms=1000)
     for tp, messages in msg_pack.items():
