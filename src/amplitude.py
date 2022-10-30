@@ -1,4 +1,5 @@
 import json
+import uuid
 
 from kafka.producer import KafkaProducer
 from starlette.requests import Request
@@ -28,15 +29,17 @@ class AmplitudeRequestProcessor:
 
         self.producer.send(
             topic=self.topic,
-            value=data,
-            key=b"event"
+            value=json.dumps(data).encode("utf-8"),
+            key=data["ingest_uuid"].encode("utf-8")
         )
         self.producer.flush()
         return data
 
     async def _convert_form_data_to_json(self):
-        form_data = await self.request.form()
-        return json.dumps(form_data._dict).encode("utf-8")
+        form_data = dict((await self.request.form())._dict)
+        form_data['e'] = json.loads(form_data['e'])
+        form_data['ingest_uuid'] = uuid.uuid4().hex
+        return form_data
 
     async def _convert_dict_to_json(self):
-        return json.dumps((await self.request.json())).encode("utf-8")
+        return (await self.request.json())

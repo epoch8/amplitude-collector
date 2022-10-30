@@ -1,3 +1,7 @@
+# 0.2.4
+
+* Add `ingest_uuid` field to message
+
 # 0.2.3
 
 * Fix `content-type` parsing
