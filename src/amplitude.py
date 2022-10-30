@@ -36,10 +36,14 @@ class AmplitudeRequestProcessor:
         return data
 
     async def _convert_form_data_to_json(self):
-        form_data = dict((await self.request.form())._dict)
-        form_data['e'] = json.loads(form_data['e'])
-        form_data['ingest_uuid'] = uuid.uuid4().hex
-        return form_data
+        data = dict((await self.request.form())._dict)
+        data['e'] = json.loads(data['e'])
+        data['ingest_uuid'] = uuid.uuid4().hex
+        return data
 
     async def _convert_dict_to_json(self):
-        return (await self.request.json())
+        data = (await self.request.json())
+        # !!! Check is it necessary
+        data['e'] = json.loads(data['e'])
+        data['ingest_uuid'] = uuid.uuid4().hex
+        return data
