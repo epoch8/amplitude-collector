@@ -1,3 +1,7 @@
+# 0.2.3
+
+* Fix `content-type` parsing
+
 # 0.2.1, 0.2.2
 
 * Add `KAFKA_USE_SSL` configuration option

@@ -42,3 +42,15 @@ services:
       - redpanda
     ports:
       - 8000:8000
+
+  # app:
+  #   build: .
+  #   restart: always
+  #   environment:
+  #     KAFKA_DSN: rc1b-5egi87jf8cnuugbk.mdb.yandexcloud.net:9091
+  #     KAFKA_USE_SSL: "True"
+  #     KAFKA_USERNAME: worker
+  #     KAFKA_PASSWORD: wtJh4ugNlwckIlgS
+  #     KAFKA_TOPIC: perek_dev_events
+  #   volumes:
+  #     - .:/usr/app
