@@ -10,7 +10,7 @@ def get_data_from_kafka(data: dict, kafka_consumer):
         for msg in messages:
             data_in_kafka.append(json.loads(msg.value))
     for msgs in data_in_kafka:
-        if msgs.get("ingest_uuid") == data["ingest_uuid"]:
+        if msgs.get("id") == data["id"]:
             return msgs
 
 
