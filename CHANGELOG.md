@@ -1,3 +1,7 @@
+# 0.2.5
+
+* Add `ingest_uuid` to JSON parsing
+
 # 0.2.4
 
 * Add `ingest_uuid` field to message
