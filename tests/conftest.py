@@ -1,4 +1,5 @@
 import json
+from uuid import uuid4
 
 import pytest
 from kafka import KafkaConsumer, KafkaProducer
@@ -88,9 +89,15 @@ def kafka_consumer():
 
 @pytest.fixture(scope="function")
 def generate_test_json():
-    return SAMPLE_MESSAGE
+    return {
+        "id": str(uuid4()),
+        **SAMPLE_MESSAGE,
+    }
 
 
 @pytest.fixture(scope="function")
 def generate_test_form():
-    return SAMPLE_MESSAGE
+    return {
+        "id": str(uuid4()),
+        **SAMPLE_MESSAGE,
+    }
