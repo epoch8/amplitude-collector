@@ -11,7 +11,7 @@ from src.config import KAFKA_DSN, KAFKA_TOPIC
 SAMPLE_MESSAGE = {
     "checksum": "e6cd69605e0fa4a46439f2e87ebcc757",
     "client": "a79cefed0b7076cf3998ef7578a18bf0",
-    "e": [
+    "e": json.dumps([
         {
             "device_id": "6rPzaVUwYHquzptdsrrKff",
             "user_id": "test_user",
@@ -36,7 +36,7 @@ SAMPLE_MESSAGE = {
             "group_properties": {},
             "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
         }
-    ],
+    ]),
     "upload_time": "1667130434980",
     "v": "2",
 }
