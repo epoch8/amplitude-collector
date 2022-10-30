@@ -19,9 +19,9 @@ class AmplitudeRequestProcessor:
         return self.request.headers.get("content-type", "")
 
     async def execute(self):
-        if self.content_type == "application/x-www-form-urlencoded":
+        if self.content_type.startswith("application/x-www-form-urlencoded"):
             data = await self._convert_form_data_to_json()
-        elif self.content_type == "application/json":
+        elif self.content_type.startswith("application/json"):
             data = await self._convert_dict_to_json()
         else:
             raise RequestContentTypeError(f"unexpected content type: {self.content_type}")

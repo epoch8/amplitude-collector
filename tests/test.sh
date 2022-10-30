@@ -1,4 +1,4 @@
-curl 'http://localhost:8000/' \
+curl 'http://localhost:8000/collect' \
   -H 'sec-ch-ua: "Google Chrome";v="105", "Not)A;Brand";v="8", "Chromium";v="105"' \
   -H 'Referer: http://localhost:49844/' \
   -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \

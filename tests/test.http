@@ -1,5 +1,6 @@
-# @host = http://localhost:8000
-@host = https://collector-prod.perek.epoch8.ru
+@host = http://localhost:8000
+# @host = https://collector-prod.perek.epoch8.ru
+# @host = https://collector-test.perek.epoch8.ru
 
 OPTIONS {{host}}/collect
 authority: collector-test.perek.epoch8.ru
@@ -13,3 +14,9 @@ sec-fetch-dest: empty
 sec-fetch-mode: cors
 sec-fetch-site: cross-site
 user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36
+
+###
+POST {{host}}/collect
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+
+checksum=4d7c68efee0dfb8d55755e41de7630e8&client=a79cefed0b7076cf3998ef7578a18bf0
