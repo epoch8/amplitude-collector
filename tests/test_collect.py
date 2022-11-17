@@ -23,7 +23,7 @@ def get_messages_count_from_kafka(kafka_consumer):
 
 
 def assert_kafka_msg_eq(kafka_msg, msg):
-    assert kafka_msg["e"] == json.loads(msg["e"])
+    assert kafka_msg["e"] == json.dumps(json.loads(msg["e"])[0])
 
 
 def test_collect_json(client: TestClient, kafka_consumer, generate_test_json):
@@ -52,4 +52,4 @@ def test_multiple_events_generate_multiple_records(client: TestClient, kafka_con
     response = client.post("/collect", json=generate_test_json_three_events)
     assert response.status_code == 200
     second_poll = get_messages_count_from_kafka(kafka_consumer)
-    assert second_poll == 0
+    assert second_poll == 3
