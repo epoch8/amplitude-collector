@@ -19,4 +19,4 @@ jobs:
       - name: Test
         env:
           COMPOSE_INTERACTIVE_NO_CLI: 1
-        run: docker-compose exec -T app pytest
+        run: docker-compose exec app pytest
