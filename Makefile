@@ -1,4 +1,4 @@
-IMAGE=cr.yandex/crp9t7k628nhsnjetke5/amplitude-collector
+IMAGE=ghcr.io/epoch8/amplitude-collector
 
 # pipx install wildq
 VERSION=$(shell wq --toml '.tool.poetry.version' pyproject.toml)
