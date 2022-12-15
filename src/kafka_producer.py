@@ -23,20 +23,11 @@ KAFKA_SECURITY_PARAMS = {
 }
 
 if not IS_TOPIC_CREATED:
-    kafka_admin = (
-        KafkaAdminClient(bootstrap_servers=KAFKA_DSN)
-        if not KAFKA_USE_SSL
-        else KafkaAdminClient(bootstrap_servers=KAFKA_DSN, **KAFKA_SECURITY_PARAMS.get(CLOUD, {}))
-    )
+    kafka_admin = KafkaAdminClient(bootstrap_servers=KAFKA_DSN, **KAFKA_SECURITY_PARAMS.get(CLOUD, {}))
     topic_list = [NewTopic(name=KAFKA_TOPIC, num_partitions=1, replication_factor=1)]
     try:
         kafka_admin.create_topics(new_topics=topic_list, validate_only=False)
     except TopicAlreadyExistsError as e:
         logger.error(str(e))
 
-kafka_producer = (
-    KafkaProducer(bootstrap_servers=KAFKA_DSN)
-    if not KAFKA_USE_SSL
-    else
-    KafkaProducer(bootstrap_servers=KAFKA_DSN, **KAFKA_SECURITY_PARAMS.get(CLOUD, {}))
-)
+kafka_producer = KafkaProducer(bootstrap_servers=KAFKA_DSN, **KAFKA_SECURITY_PARAMS.get(CLOUD, {}))
