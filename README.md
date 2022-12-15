@@ -2,6 +2,7 @@
 
 ## ENV vars
 
+* `CLOUD` - cloud service in which the application runs
 * `DEBUG` - `True`/`False` - echo incoming messages to stdout
 
 * `KAFKA_DSN` - hostname of kafka cluster
@@ -11,3 +12,4 @@
 * `KAFKA_PASSWORD`
 
 * `KAFKA_TOPIC` - topic name to write
+* `IS_TOPIC_CREATED` - is the topic created? if False, it will be created automatically
