@@ -1,5 +1,6 @@
 # 0.4.0
-* Add `CLOUD` configuration option
+
+* Add `CLOUD_ENV` configuration option
 * Add `KAFKA_TOPIC_CREATE` configuration option
 
 # 0.2.5
