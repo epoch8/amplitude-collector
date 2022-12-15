@@ -12,4 +12,4 @@
 * `KAFKA_PASSWORD`
 
 * `KAFKA_TOPIC` - topic name to write
-* `IS_TOPIC_CREATED` - is the topic created? if False, it will be created automatically
+* `KAFKA_TOPIC_CREATE ` - is the topic created? if False, it will be created automatically

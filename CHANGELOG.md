@@ -1,6 +1,6 @@
 # 0.4.0
 * Add `CLOUD` configuration option
-* Add `IS_TOPIC_CREATED` configuration option
+* Add `KAFKA_TOPIC_CREATE` configuration option
 
 # 0.2.5
 
