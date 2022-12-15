@@ -8,5 +8,5 @@ KAFKA_TOPIC_CREATE  = os.environ.get("KAFKA_TOPIC_CREATE ", "True") == "True"
 KAFKA_USERNAME = os.environ.get("KAFKA_USERNAME", "collector")
 KAFKA_PASSWORD = os.environ.get("KAFKA_PASSWORD", "")
 
-CLOUD = os.environ.get("CLOUD", "aws")
+CLOUD = os.environ.get("CLOUD", "")
 DEBUG = os.environ.get("DEBUG", "True") == "True"
