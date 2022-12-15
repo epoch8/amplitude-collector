@@ -5,7 +5,7 @@ from kafka.admin import NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
 from src.config import (
-    CLOUD,
+    CLOUD_ENV,
     KAFKA_DSN,
     KAFKA_PASSWORD,
     KAFKA_USERNAME,
@@ -29,7 +29,7 @@ KAFKA_SECURITY_PARAMS = {
 
 if not KAFKA_TOPIC_CREATE:
     kafka_admin = KafkaAdminClient(
-        bootstrap_servers=KAFKA_DSN, **KAFKA_SECURITY_PARAMS.get(CLOUD, {})
+        bootstrap_servers=KAFKA_DSN, **KAFKA_SECURITY_PARAMS.get(CLOUD_ENV, {})
     )
     topic_list = [NewTopic(name=KAFKA_TOPIC, num_partitions=1, replication_factor=1)]
     try:
@@ -38,5 +38,5 @@ if not KAFKA_TOPIC_CREATE:
         logger.error(str(e))
 
 kafka_producer = KafkaProducer(
-    bootstrap_servers=KAFKA_DSN, **KAFKA_SECURITY_PARAMS.get(CLOUD, {})
+    bootstrap_servers=KAFKA_DSN, **KAFKA_SECURITY_PARAMS.get(CLOUD_ENV, {})
 )

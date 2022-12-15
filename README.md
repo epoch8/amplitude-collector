@@ -2,7 +2,7 @@
 
 ## ENV vars
 
-* `CLOUD` - cloud service in which the application runs, possible values:
+* `CLOUD_ENV` - cloud service in which the application runs, possible values:
   * `"aws"`
   * `"yandex"`
   * `""`
