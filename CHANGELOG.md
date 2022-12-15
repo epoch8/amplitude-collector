@@ -1,3 +1,7 @@
+# 0.4.0
+* Add `CLOUD` configuration option
+* Add `IS_TOPIC_CREATED` configuration option
+
 # 0.2.5
 
 * Add `ingest_uuid` to JSON parsing
