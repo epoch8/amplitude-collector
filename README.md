@@ -2,7 +2,10 @@
 
 ## ENV vars
 
-* `CLOUD` - cloud service in which the application runs
+* `CLOUD` - cloud service in which the application runs, possible values:
+  * `"aws"`
+  * `"yandex"`
+  * `""`
 * `DEBUG` - `True`/`False` - echo incoming messages to stdout
 
 * `KAFKA_DSN` - hostname of kafka cluster
