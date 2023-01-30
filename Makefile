@@ -12,4 +12,4 @@ build: requirements.txt
 upload:
 	docker push ${IMAGE}:${VERSION}
 
-.PHONY: build upload
+.PHONY: build upload requirements.txt

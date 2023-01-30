@@ -1,5 +1,7 @@
 import os
 
+PROJECT_NAME = os.environ.get("PROJECT_NAME", "")
+
 KAFKA_DSN = os.environ["KAFKA_DSN"]
 KAFKA_TOPIC = os.environ.get("KAFKA_TOPIC", "events")
 KAFKA_TOPIC_CREATE  = os.environ.get("KAFKA_TOPIC_CREATE ", "True") == "True"

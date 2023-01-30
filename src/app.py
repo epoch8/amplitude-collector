@@ -2,7 +2,9 @@ from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Route
+from starlette_exporter import PrometheusMiddleware, handle_metrics
 
+from src.config import PROJECT_NAME
 from src.handlers import collect, index
 
 app = Starlette(
@@ -10,6 +12,7 @@ app = Starlette(
     routes=[
         Route("/", index, methods=["GET"]),
         Route("/collect", collect, methods=["POST", "GET"]),
+        Route("/metrics", handle_metrics)
     ],
     middleware=[
         Middleware(
@@ -17,6 +20,11 @@ app = Starlette(
             allow_origins=["*"],
             allow_methods=["*"],
             allow_headers=["*"],
-        )
+        ),
+        Middleware(
+            PrometheusMiddleware,
+            app_name="collector",
+            prefix=PROJECT_NAME,
+            )
     ],
 )
