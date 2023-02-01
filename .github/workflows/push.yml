@@ -10,4 +10,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Test
-        run: docker-compose run app pytest
+        run: DOCKER_BUILDKIT=1 docker-compose run app pytest
