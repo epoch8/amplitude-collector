@@ -1,5 +1,7 @@
-HOST="http://localhost:8000/collect"
+# HOST="http://localhost:8000/collect"
 # 'https://collector-test.perek.epoch8.ru/collect'
+# HOST="https://amplitude-collector.stage.looky.dev/collect"
+HOST="https://amplitude-collector.prod.looky.dev/collect"
 
 curl $HOST \
   -H 'authority: collector-test.perek.epoch8.ru' \

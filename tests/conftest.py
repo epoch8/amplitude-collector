@@ -39,9 +39,7 @@ def first_message():
                 "ingest_uuid": "1",
                 **SAMPLE_MESSAGE,
             }
-        ).encode(
-            "utf-8"
-        ),
+        ).encode("utf-8"),
         key=b"1",
     )
     yield
@@ -61,6 +59,7 @@ def generate_test_json():
         "id": str(uuid4()),
         **SAMPLE_MESSAGE,
     }
+
 
 @pytest.fixture(scope="function")
 def generate_test_json_three_events():

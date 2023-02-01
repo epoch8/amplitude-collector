@@ -11,7 +11,7 @@ app = Starlette(
     routes=[
         Route("/", index, methods=["GET"]),
         Route("/collect", collect, methods=["POST", "GET"]),
-        Route("/metrics", handle_metrics)
+        Route("/metrics", handle_metrics),
     ],
     middleware=[
         Middleware(
@@ -23,6 +23,6 @@ app = Starlette(
         Middleware(
             PrometheusMiddleware,
             app_name="collector",
-            )
+        ),
     ],
 )

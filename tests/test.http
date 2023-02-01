@@ -1,5 +1,6 @@
 # @host = http://localhost:8000
-@host = https://collector-prod.perek.epoch8.ru
+# @host = https://collector-prod.perek.epoch8.ru
+@host = https://amplitude-collector.stage.looky.dev
 
 OPTIONS {{host}}/collect
 authority: collector-test.perek.epoch8.ru

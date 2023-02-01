@@ -24,4 +24,6 @@ async def collect(request):
         return Response("success")
     except RequestContentTypeError as e:
         logger.error(str(e))
-        return Response("unexpected content type", status_code=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            "unexpected content type", status_code=status.HTTP_400_BAD_REQUEST
+        )
