@@ -13,6 +13,7 @@ def get_data_from_kafka(data: dict, kafka_consumer):
         if msgs.get("id") == data["id"]:
             return msgs
 
+
 def get_messages_count_from_kafka(kafka_consumer):
     data_in_kafka = []
     msg_pack = kafka_consumer.poll(timeout_ms=1000)
@@ -30,14 +31,18 @@ def test_collect_json(client: TestClient, kafka_consumer, generate_test_json):
     client.headers = {"content-type": "application/json"}  # type: ignore
     response = client.post("/collect", json=generate_test_json)
     assert response.status_code == 200
-    assert_kafka_msg_eq(get_data_from_kafka(generate_test_json, kafka_consumer), generate_test_json)
+    assert_kafka_msg_eq(
+        get_data_from_kafka(generate_test_json, kafka_consumer), generate_test_json
+    )
 
 
 def test_collect_form_data(client: TestClient, kafka_consumer, generate_test_form):
     client.headers = {"content-type": "application/x-www-form-urlencoded"}  # type: ignore
     response = client.post("/collect", data=generate_test_form)
     assert response.status_code == 200
-    assert_kafka_msg_eq(get_data_from_kafka(generate_test_form, kafka_consumer), generate_test_form)
+    assert_kafka_msg_eq(
+        get_data_from_kafka(generate_test_form, kafka_consumer), generate_test_form
+    )
 
 
 def test_collect_unexpected_content_type(client: TestClient):
@@ -46,7 +51,10 @@ def test_collect_unexpected_content_type(client: TestClient):
     response = client.post("/collect", data=data)
     assert response.status_code == 400
 
-def test_multiple_events_generate_multiple_records(client: TestClient, kafka_consumer, generate_test_json_three_events):
+
+def test_multiple_events_generate_multiple_records(
+    client: TestClient, kafka_consumer, generate_test_json_three_events
+):
     client.headers = {"content-type": "application/json"}  # type: ignore
     first_poll = get_messages_count_from_kafka(kafka_consumer)
     response = client.post("/collect", json=generate_test_json_three_events)

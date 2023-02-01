@@ -2,7 +2,7 @@ import os
 
 KAFKA_DSN = os.environ["KAFKA_DSN"]
 KAFKA_TOPIC = os.environ.get("KAFKA_TOPIC", "events")
-KAFKA_TOPIC_CREATE  = os.environ.get("KAFKA_TOPIC_CREATE ", "True") == "True"
+KAFKA_TOPIC_CREATE = os.environ.get("KAFKA_TOPIC_CREATE ", "True") == "True"
 
 KAFKA_USERNAME = os.environ.get("KAFKA_USERNAME", "collector")
 KAFKA_PASSWORD = os.environ.get("KAFKA_PASSWORD", "")

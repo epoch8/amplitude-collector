@@ -3,10 +3,7 @@ IMAGE=ghcr.io/epoch8/amplitude-collector
 # pipx install wildq
 VERSION=$(shell wq --toml '.tool.poetry.version' pyproject.toml)
 
-requirements.txt:
-	poetry export --without dev > requirements.txt
-
-build: requirements.txt
+build:
 	docker build -t ${IMAGE}:${VERSION} --progress=plain --ssh default --platform=linux/amd64 . 
 
 upload:

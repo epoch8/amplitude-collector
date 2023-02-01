@@ -25,16 +25,17 @@ class AmplitudeRequestProcessor:
         elif self.content_type.startswith("application/json"):
             separate_records = await self._convert_dict_to_json()
         else:
-            raise RequestContentTypeError(f"unexpected content type: {self.content_type}")
+            raise RequestContentTypeError(
+                f"unexpected content type: {self.content_type}"
+            )
         for record in separate_records:
             self.producer.send(
                 topic=self.topic,
                 value=json.dumps(record).encode("utf-8"),
-                key=record["ingest_uuid"].encode("utf-8")
+                key=record["ingest_uuid"].encode("utf-8"),
             )
         self.producer.flush()
         return separate_records
-
 
     async def _convert_form_data_to_json(self):
         data = dict((await self.request.form())._dict)
@@ -42,17 +43,17 @@ class AmplitudeRequestProcessor:
         return separate_records
 
     async def _convert_dict_to_json(self):
-        data = (await self.request.json())
+        data = await self.request.json()
         separate_records = await self._prepare_separate_records(data)
         return separate_records
 
     @staticmethod
     async def _prepare_separate_records(record: dict) -> list:
-        events = json.loads(record['e'])
+        events = json.loads(record["e"])
         result = []
         for event in events:
             separate_data = record.copy()
-            separate_data['ingest_uuid'] = uuid.uuid4().hex
-            separate_data['e'] = json.dumps(event)
+            separate_data["ingest_uuid"] = uuid.uuid4().hex
+            separate_data["e"] = json.dumps(event)
             result.append(separate_data)
         return result
