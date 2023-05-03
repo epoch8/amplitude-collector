@@ -25,7 +25,11 @@ def get_messages_count_from_kafka(kafka_consumer):
 
 
 def assert_kafka_msg_eq(kafka_msg, msg):
-    assert kafka_msg["e"] == json.dumps(json.loads(msg["e"])[0])
+    e = json.loads(kafka_msg['e'])
+    e.pop('ip_address')
+    e.pop('collector_upload_time')
+    e = json.dumps(e)
+    assert e == json.dumps(json.loads(msg["e"])[0])
 
 
 def test_collect_json(client: TestClient, kafka_consumer, generate_test_json):
@@ -68,7 +72,8 @@ def test_ip_address_in_message(client: TestClient, kafka_consumer, generate_test
     response = client.post("/collect", json=generate_test_json)
     assert response.status_code == 200
     kafka_msg = get_data_from_kafka(generate_test_json, kafka_consumer)
-    assert kafka_msg['ip_address'] == 'testclient'
+    e = json.loads(kafka_msg['e'])
+    assert e['ip_address'] == 'testclient'
 
 @freeze_time("2023-05-01 12:00:00")
 def test_server_timestamp_in_message(client: TestClient, kafka_consumer, generate_test_json):
@@ -76,4 +81,5 @@ def test_server_timestamp_in_message(client: TestClient, kafka_consumer, generat
     response = client.post("/collect", json=generate_test_json)
     assert response.status_code == 200
     kafka_msg = get_data_from_kafka(generate_test_json, kafka_consumer)
-    assert kafka_msg['collector_upload_time'] ==  datetime.datetime(2023, 5, 1, 12, 0, 0).isoformat()
+    e = json.loads(kafka_msg['e'])
+    assert e['collector_upload_time'] ==  datetime.datetime(2023, 5, 1, 12, 0, 0).isoformat()

@@ -50,13 +50,14 @@ class AmplitudeRequestProcessor:
 
     
     async def _prepare_separate_records(self, record: dict) -> list:
-        record["ip_address"] = self.request.client.host
-        record["collector_upload_time"] = datetime.now().isoformat()
+        
         events = json.loads(record["e"])
         result = []
         for event in events:
             separate_data = record.copy()
             separate_data["ingest_uuid"] = uuid.uuid4().hex
+            event["ip_address"] = self.request.client.host
+            event["collector_upload_time"] = datetime.now().isoformat()
             separate_data["e"] = json.dumps(event)
             result.append(separate_data)
         return result
