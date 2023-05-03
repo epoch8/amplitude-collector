@@ -1,5 +1,6 @@
 import json
-
+from freezegun import freeze_time
+import datetime
 from starlette.testclient import TestClient
 
 
@@ -61,3 +62,18 @@ def test_multiple_events_generate_multiple_records(
     assert response.status_code == 200
     second_poll = get_messages_count_from_kafka(kafka_consumer)
     assert second_poll == 3
+
+def test_ip_address_in_message(client: TestClient, kafka_consumer, generate_test_json):
+    client.headers = {"content-type": "application/json"}  # type: ignore
+    response = client.post("/collect", json=generate_test_json)
+    assert response.status_code == 200
+    kafka_msg = get_data_from_kafka(generate_test_json, kafka_consumer)
+    assert kafka_msg['ip_address'] == 'testclient'
+
+@freeze_time("2023-05-01 12:00:00")
+def test_server_timestamp_in_message(client: TestClient, kafka_consumer, generate_test_json):
+    client.headers = {"content-type": "application/json"}  # type: ignore
+    response = client.post("/collect", json=generate_test_json)
+    assert response.status_code == 200
+    kafka_msg = get_data_from_kafka(generate_test_json, kafka_consumer)
+    assert kafka_msg['collector_upload_time'] ==  datetime.datetime(2023, 5, 1, 12, 0, 0).isoformat()

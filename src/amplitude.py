@@ -1,5 +1,6 @@
 import json
 import uuid
+from datetime import datetime
 
 from kafka.producer import KafkaProducer
 from starlette.requests import Request
@@ -47,8 +48,10 @@ class AmplitudeRequestProcessor:
         separate_records = await self._prepare_separate_records(data)
         return separate_records
 
-    @staticmethod
-    async def _prepare_separate_records(record: dict) -> list:
+    
+    async def _prepare_separate_records(self, record: dict) -> list:
+        record["ip_address"] = self.request.client.host
+        record["collector_upload_time"] = datetime.now().isoformat()
         events = json.loads(record["e"])
         result = []
         for event in events:
