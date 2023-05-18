@@ -29,4 +29,4 @@ EXPOSE 8000
 
 LABEL org.opencontainers.image.source https://github.com/epoch8/amplitude-collector
 
-CMD ["uvicorn", "src.app:app", "--host=0.0.0.0"]
+CMD ["uvicorn", "src.app:app", "--host=0.0.0.0", "--proxy-headers"]
