@@ -21,6 +21,7 @@ async def collect(request):
         ).execute()
         if DEBUG:
             print(send_data)
+            print(request.headers)
         return Response("success")
     except RequestContentTypeError as e:
         logger.error(str(e))
