@@ -56,7 +56,10 @@ class AmplitudeRequestProcessor:
         for event in events:
             separate_data = record.copy()
             separate_data["ingest_uuid"] = uuid.uuid4().hex
-            event["ip_address"] = self.request.client.host
+            if 'x-real-ip' in self.request.headers:
+                event["ip_address"] = self.request.headers['x-real-ip']
+            else:
+                event["ip_address"] = self.request.client.host
             event["collector_upload_time"] = datetime.now().isoformat()
             separate_data["e"] = json.dumps(event)
             result.append(separate_data)
