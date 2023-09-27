@@ -3,6 +3,7 @@
         "ms-python.black-formatter",
         "ms-python.isort",
         "hediet.vscode-drawio",
-        "humao.rest-client"
+        "humao.rest-client",
+        "mhutchie.git-graph"
     ]
 }
