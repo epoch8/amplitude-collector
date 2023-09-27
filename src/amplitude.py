@@ -1,8 +1,10 @@
 import json
+from typing import Dict, List
 import uuid
 from datetime import datetime
 
 from kafka.producer import KafkaProducer
+import orjson
 from starlette.requests import Request
 
 
@@ -32,35 +34,35 @@ class AmplitudeRequestProcessor:
         for record in separate_records:
             self.producer.send(
                 topic=self.topic,
-                value=json.dumps(record).encode("utf-8"),
+                value=orjson.dumps(record),
                 key=record["ingest_uuid"].encode("utf-8"),
             )
         self.producer.flush()
         return separate_records
 
-    async def _convert_form_data_to_json(self):
+    async def _convert_form_data_to_json(self) -> List[Dict]:
         data = dict((await self.request.form())._dict)
         separate_records = await self._prepare_separate_records(data)
         return separate_records
 
     async def _convert_dict_to_json(self):
-        data = await self.request.json()
+        data = orjson.loads(await self.request.body())
         separate_records = await self._prepare_separate_records(data)
         return separate_records
 
-    
-    async def _prepare_separate_records(self, record: dict) -> list:
-        
-        events = json.loads(record["e"])
+    async def _prepare_separate_records(self, record: dict) -> List[Dict]:
+        events = orjson.loads(record["e"])
+        del record["e"]
+
         result = []
         for event in events:
             separate_data = record.copy()
             separate_data["ingest_uuid"] = uuid.uuid4().hex
-            if 'x-real-ip' in self.request.headers:
-                event["ip_address"] = self.request.headers['x-real-ip']
+            if "x-real-ip" in self.request.headers:
+                event["ip_address"] = self.request.headers["x-real-ip"]
             else:
                 event["ip_address"] = self.request.client.host
             event["collector_upload_time"] = datetime.now().isoformat()
-            separate_data["e"] = json.dumps(event)
+            separate_data["e"] = orjson.dumps(event).decode("utf-8")
             result.append(separate_data)
         return result
