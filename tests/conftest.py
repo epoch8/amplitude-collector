@@ -48,8 +48,11 @@ def first_message():
 @pytest.fixture(scope="function")
 def kafka_consumer():
     consumer = KafkaConsumer(
-        KAFKA_TOPIC, bootstrap_servers=KAFKA_DSN, auto_offset_reset="earliest"
+        KAFKA_TOPIC,
+        bootstrap_servers=KAFKA_DSN,
+        # auto_offset_reset="earliest",
     )
+    consumer.poll(timeout_ms=100)
     yield consumer
 
 

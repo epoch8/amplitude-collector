@@ -1,6 +1,7 @@
 import json
 from freezegun import freeze_time
 import datetime
+import pytest
 from starlette.testclient import TestClient
 
 
@@ -36,9 +37,8 @@ def test_collect_json(client: TestClient, kafka_consumer, generate_test_json):
     client.headers = {"content-type": "application/json"}  # type: ignore
     response = client.post("/collect", json=generate_test_json)
     assert response.status_code == 200
-    assert_kafka_msg_eq(
-        get_data_from_kafka(generate_test_json, kafka_consumer), generate_test_json
-    )
+    data_from_kafka = get_data_from_kafka(generate_test_json, kafka_consumer)
+    assert_kafka_msg_eq(data_from_kafka, generate_test_json)
 
 
 def test_collect_form_data(client: TestClient, kafka_consumer, generate_test_form):
@@ -92,6 +92,11 @@ def test_server_timestamp_in_message(
     )
 
 
+@pytest.mark.benchmark(
+    min_time=1.0,
+    max_time=2.0,
+    min_rounds=100,
+)
 def test_benchmark(
     client: TestClient,
     kafka_consumer,
