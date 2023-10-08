@@ -1,6 +1,7 @@
 import json
 from typing import Dict, List
 import uuid
+from uuid_extensions import uuid7str
 from datetime import datetime
 
 from kafka.producer import KafkaProducer
@@ -54,6 +55,8 @@ class AmplitudeRequestProcessor:
         events = orjson.loads(record["e"])
         del record["e"]
 
+        datetime_now = datetime.now().isoformat()
+
         result = []
         for event in events:
             separate_data = record.copy()
@@ -62,7 +65,7 @@ class AmplitudeRequestProcessor:
                 event["ip_address"] = self.request.headers["x-real-ip"]
             else:
                 event["ip_address"] = self.request.client.host
-            event["collector_upload_time"] = datetime.now().isoformat()
+            event["collector_upload_time"] = datetime_now
             separate_data["e"] = orjson.dumps(event).decode("utf-8")
             result.append(separate_data)
         return result

@@ -1,5 +1,6 @@
 import json
 from uuid import uuid4
+import orjson
 
 import pytest
 from kafka import KafkaConsumer, KafkaProducer
@@ -8,7 +9,11 @@ from starlette.testclient import TestClient
 
 from src.app import app
 from src.config import KAFKA_DSN, KAFKA_TOPIC
-from tests.resources import SAMPLE_MESSAGE, SAMPLE_MESSAGE_THREE_EVENTS
+from tests.resources import (
+    SAMPLE_MESSAGE,
+    SAMPLE_MESSAGE_LOTS_OF_EVENTS,
+    SAMPLE_MESSAGE_THREE_EVENTS,
+)
 
 
 @pytest.fixture(scope="session")
@@ -70,6 +75,16 @@ def generate_test_json_three_events():
         "id": str(uuid4()),
         **SAMPLE_MESSAGE_THREE_EVENTS,
     }
+
+
+@pytest.fixture(scope="function")
+def generate_test_json_lots_of_events():
+    return orjson.dumps(
+        {
+            "id": str(uuid4()),
+            **SAMPLE_MESSAGE_LOTS_OF_EVENTS,
+        }
+    )
 
 
 @pytest.fixture(scope="function")

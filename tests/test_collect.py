@@ -93,18 +93,16 @@ def test_server_timestamp_in_message(
 
 
 @pytest.mark.benchmark(
-    min_time=1.0,
-    max_time=2.0,
-    min_rounds=100,
+    min_rounds=10,
 )
 def test_benchmark(
     client: TestClient,
     kafka_consumer,
-    generate_test_json_three_events,
+    generate_test_json_lots_of_events,
     benchmark,
 ):
     @benchmark
     def test_benchmark():
         client.headers = {"content-type": "application/json"}  # type: ignore
         first_poll = get_messages_count_from_kafka(kafka_consumer)
-        response = client.post("/collect", json=generate_test_json_three_events)
+        response = client.post("/collect", content=generate_test_json_lots_of_events)
