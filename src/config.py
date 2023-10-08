@@ -8,4 +8,4 @@ KAFKA_USERNAME = os.environ.get("KAFKA_USERNAME", "collector")
 KAFKA_PASSWORD = os.environ.get("KAFKA_PASSWORD", "")
 
 CLOUD_ENV = os.environ.get("CLOUD_ENV", "")
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+DEBUG = os.environ.get("DEBUG", "False") == "True"
