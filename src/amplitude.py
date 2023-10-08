@@ -25,9 +25,11 @@ class AmplitudeRequestProcessor:
 
     async def execute(self):
         if self.content_type.startswith("application/x-www-form-urlencoded"):
-            separate_records = await self._convert_form_data_to_json()
+            separate_records = self._convert_form_data_to_json(
+                dict((await self.request.form())._dict)
+            )
         elif self.content_type.startswith("application/json"):
-            separate_records = await self._convert_dict_to_json()
+            separate_records = self._convert_dict_to_json(await self.request.body())
         else:
             raise RequestContentTypeError(
                 f"unexpected content type: {self.content_type}"
@@ -41,17 +43,16 @@ class AmplitudeRequestProcessor:
         self.producer.flush()
         return separate_records
 
-    async def _convert_form_data_to_json(self) -> List[Dict]:
-        data = dict((await self.request.form())._dict)
-        separate_records = await self._prepare_separate_records(data)
+    def _convert_form_data_to_json(self, form_dict: Dict) -> List[Dict]:
+        separate_records = self._prepare_separate_records(form_dict)
         return separate_records
 
-    async def _convert_dict_to_json(self):
-        data = orjson.loads(await self.request.body())
-        separate_records = await self._prepare_separate_records(data)
+    def _convert_dict_to_json(self, body_bytes: bytes) -> List[Dict]:
+        data = orjson.loads(body_bytes)
+        separate_records = self._prepare_separate_records(data)
         return separate_records
 
-    async def _prepare_separate_records(self, record: dict) -> List[Dict]:
+    def _prepare_separate_records(self, record: dict) -> List[Dict]:
         events = orjson.loads(record["e"])
         del record["e"]
 
