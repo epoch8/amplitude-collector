@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  perf:
+    image: grafana/k6
+
+    environment:
+      - TARGET_HOST=app:8000
+
+    volumes:
+      - ./perf:/perf
+    
+    command: ["run", "/perf/script.js"]
+
+    depends_on:
+      - app
