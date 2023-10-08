@@ -1,6 +1,6 @@
 import json
 from typing import Dict, List
-import uuid
+import fastuuid
 from uuid_extensions import uuid7str
 from datetime import datetime
 
@@ -61,7 +61,7 @@ class AmplitudeRequestProcessor:
         result = []
         for event in events:
             separate_data = record.copy()
-            separate_data["ingest_uuid"] = uuid7str()
+            separate_data["ingest_uuid"] = str(fastuuid.uuid4())
             if "x-real-ip" in self.request.headers:
                 event["ip_address"] = self.request.headers["x-real-ip"]
             else:

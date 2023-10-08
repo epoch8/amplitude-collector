@@ -74,6 +74,24 @@ files = [
 ]
 
 [[package]]
+name = "fastuuid"
+version = "0.8.0"
+description = "Python bindings to Rust's UUID library."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "fastuuid-0.8.0-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:9ada56e08c7cdf6e61d9a8fe509c0cc5fc1097df06ed9d8d3a3407d601554d0a"},
+    {file = "fastuuid-0.8.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:29d0e64f240cf94715a414f8838493a30a2034fbb0fa1b386a627d534f59879c"},
+    {file = "fastuuid-0.8.0-cp37-cp37m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:b46f6e10684aaae13e2576b84f031b50f0d3741be51d113e6a918fc31251b165"},
+    {file = "fastuuid-0.8.0-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1deae4c865ec69ec3027c400e9ce171fcfb3dc1dd0931e06d80d87111a320b8f"},
+    {file = "fastuuid-0.8.0-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:d66cdd9a2222935960f4c50281bace32081b533abdb5dcb58b85280b5b953945"},
+    {file = "fastuuid-0.8.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5dc280089205f98764999ed013b93d325ad74db1d591bc7f15dbe6d8f7274d0a"},
+    {file = "fastuuid-0.8.0-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:3a2a31afc64768de3840bab044e2e6fe66c7f969d5eaf524a65fb6312b3fe0a2"},
+    {file = "fastuuid-0.8.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5f50eab0dcfaa493b07162aa2278412810c2f1a0dcdb67f68e76506fb5d0f725"},
+    {file = "fastuuid-0.8.0.tar.gz", hash = "sha256:4d8fc293a05605511224f8162c793b17004adbb45446dfaaaf87c878070bb774"},
+]
+
+[[package]]
 name = "freezegun"
 version = "1.2.2"
 description = "Let your Python tests travel through time"
@@ -576,4 +594,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.4.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "dd6b9355c43671385b9f3ec12e1b78c8eeff9f0be00acadbf093b6034abe0ec7"
+content-hash = "b41564f68d883550b448b0912b0778eedb9acf68cdc0a096cc1f59e8377003fb"

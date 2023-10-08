@@ -17,6 +17,7 @@ starlette-exporter = "^0.14.0"
 freezegun = "^1.2.2"
 orjson = "^3.9.7"
 uuid7 = "^0.1.0"
+fastuuid = "^0.8.0"
 
 
 [tool.poetry.group.dev.dependencies]
