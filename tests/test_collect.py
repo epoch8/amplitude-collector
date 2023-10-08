@@ -90,19 +90,3 @@ def test_server_timestamp_in_message(
         e["collector_upload_time"]
         == datetime.datetime(2023, 5, 1, 12, 0, 0).isoformat()
     )
-
-
-@pytest.mark.benchmark(
-    min_rounds=10,
-)
-def test_benchmark(
-    client: TestClient,
-    kafka_consumer,
-    generate_test_json_lots_of_events,
-    benchmark,
-):
-    @benchmark
-    def test_benchmark():
-        client.headers = {"content-type": "application/json"}  # type: ignore
-        first_poll = get_messages_count_from_kafka(kafka_consumer)
-        response = client.post("/collect", content=generate_test_json_lots_of_events)
