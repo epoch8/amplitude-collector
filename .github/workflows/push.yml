@@ -1,4 +1,4 @@
-name: actions-pytest
+name: test
 
 on: [push]
 
