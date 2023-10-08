@@ -60,7 +60,7 @@ class AmplitudeRequestProcessor:
         result = []
         for event in events:
             separate_data = record.copy()
-            separate_data["ingest_uuid"] = uuid.uuid4().hex
+            separate_data["ingest_uuid"] = uuid7str()
             if "x-real-ip" in self.request.headers:
                 event["ip_address"] = self.request.headers["x-real-ip"]
             else:
