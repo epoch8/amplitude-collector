@@ -57,15 +57,19 @@ class AmplitudeRequestProcessor:
         del record["e"]
 
         if "x-real-ip" in self.request.headers:
-            record["ip_address"] = self.request.headers["x-real-ip"]
+            ip_address = self.request.headers["x-real-ip"]
         else:
-            record["ip_address"] = self.request.client.host
-        record["collector_upload_time"] = datetime.now().isoformat()
+            ip_address = self.request.client.host
+        
+        collector_upload_time = datetime.now().isoformat()
 
         uuids = fastuuid.uuid4_as_strings_bulk(len(events))
 
         result = []
         for uuid_str, event in zip(uuids, events):
+            event["ip_address"] = ip_address
+            event["collector_upload_time"] = collector_upload_time
+
             separate_data = record.copy()
             separate_data["ingest_uuid"] = uuid_str
             separate_data["e"] = orjson.dumps(event).decode("utf-8")
