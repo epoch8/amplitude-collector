@@ -1,3 +1,24 @@
+# WIP 0.5.0
+
+Optimization:
+
+* Move to `orjson` for json handling
+* Move to `fasteruuid` for uuid generation
+* Increase number of workers
+
+
+Before (https://github.com/epoch8/amplitude-collector/actions/runs/6450075227/job/17509073693):
+
+```
+http_req_duration..............: avg=429.41ms min=50ms    med=429.41ms max=663.29ms p(90)=445.46ms p(95)=454.04ms
+```
+
+After (https://github.com/epoch8/amplitude-collector/actions/runs/6455384921/job/17522777436):
+
+```
+http_req_duration..............: avg=270.32ms min=56.97ms med=275.47ms max=499.49ms p(90)=383.73ms p(95)=407.69ms
+```
+
 # 0.4.0
 
 * Add `CLOUD_ENV` configuration option

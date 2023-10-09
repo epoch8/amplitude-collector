@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "amplitude-collector"
-version = "0.4.7"
+version = "0.5.0"
 description = ""
 authors = ["Andrey Tatarinov <a@tatarinov.co>"]
 readme = "README.md"
