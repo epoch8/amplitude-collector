@@ -1,6 +1,4 @@
-import json
 from typing import Dict, List
-import fastuuid
 from uuid_extensions import uuid7str
 from datetime import datetime
 
@@ -60,18 +58,16 @@ class AmplitudeRequestProcessor:
             ip_address = self.request.headers["x-real-ip"]
         else:
             ip_address = self.request.client.host
-        
+
         collector_upload_time = datetime.now().isoformat()
 
-        uuids = fastuuid.uuid4_as_strings_bulk(len(events))
-
         result = []
-        for uuid_str, event in zip(uuids, events):
+        for event in events:
             event["ip_address"] = ip_address
             event["collector_upload_time"] = collector_upload_time
 
             separate_data = record.copy()
-            separate_data["ingest_uuid"] = uuid_str
+            separate_data["ingest_uuid"] = uuid7str()
             separate_data["e"] = orjson.dumps(event).decode("utf-8")
             result.append(separate_data)
         return result
