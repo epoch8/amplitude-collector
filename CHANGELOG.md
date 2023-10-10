@@ -3,8 +3,8 @@
 Optimization:
 
 * Move to `orjson` for json handling
-* Move to `fasteruuid` for uuid generation
 * Increase number of workers
+* Migrate to Python 3.11
 
 
 Before (https://github.com/epoch8/amplitude-collector/actions/runs/6450075227/job/17509073693):
@@ -13,10 +13,10 @@ Before (https://github.com/epoch8/amplitude-collector/actions/runs/6450075227/jo
 http_req_duration..............: avg=429.41ms min=50ms    med=429.41ms max=663.29ms p(90)=445.46ms p(95)=454.04ms
 ```
 
-After (https://github.com/epoch8/amplitude-collector/actions/runs/6455384921/job/17522777436):
+After (https://github.com/epoch8/amplitude-collector/actions/runs/6474463777/job/17579435194):
 
 ```
-http_req_duration..............: avg=270.32ms min=56.97ms med=275.47ms max=499.49ms p(90)=383.73ms p(95)=407.69ms
+http_req_duration..............: avg=192.35ms min=61.13ms med=199.77ms max=343.65ms p(90)=243.79ms p(95)=259.77ms
 ```
 
 # 0.4.0
