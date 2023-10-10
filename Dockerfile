@@ -21,12 +21,12 @@ WORKDIR /app
 RUN --mount=type=cache,target=/root/.cache pip install --upgrade pip
 
 COPY --from=builder /app/requirements.txt .
-# RUN --mount=type=cache,target=/root/.cache pip install -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache pip install -r requirements.txt
 
-# COPY . /app
+COPY . /app
 
-# EXPOSE 8000
+EXPOSE 8000
 
-# LABEL org.opencontainers.image.source https://github.com/epoch8/amplitude-collector
+LABEL org.opencontainers.image.source https://github.com/epoch8/amplitude-collector
 
-# CMD ["uvicorn", "src.app:app", "--host=0.0.0.0", "--proxy-headers", "--workers=4"]
+CMD ["uvicorn", "src.app:app", "--host=0.0.0.0", "--proxy-headers", "--workers=4"]
