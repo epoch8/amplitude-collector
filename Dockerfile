@@ -9,7 +9,7 @@ RUN pip install --upgrade pip poetry
 COPY pyproject.toml poetry.lock ./
 
 RUN --mount=type=cache,target=/root/.cache poetry lock --no-update
-RUN poetry export --without dev -f requirements.txt --without-hashes -o requirements.txt
+RUN poetry export -f requirements.txt --without-hashes -o requirements.txt
 
 ###############################################################################
 
