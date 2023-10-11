@@ -24,7 +24,22 @@
 		"ghcr.io/devcontainers-contrib/features/pipx-package": {},
 		"ghcr.io/akhildevelops/devcontainer-features/pip": {},
 	},
-
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.debugpy",
+				"ms-python.black-formatter",
+				"ms-python.isort",
+				"hediet.vscode-drawio",
+				"humao.rest-client",
+				"mhutchie.git-graph",
+				"ms-python.mypy-type-checker",
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"github.vscode-github-actions"
+			]
+		}
+	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
