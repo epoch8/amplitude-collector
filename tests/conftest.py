@@ -7,8 +7,8 @@ from kafka import KafkaConsumer, KafkaProducer
 from kafka.admin import ConfigResource, KafkaAdminClient
 from starlette.testclient import TestClient
 
-from src.app import app
-from src.config import KAFKA_DSN, KAFKA_TOPIC
+from amplitude_collector.app import app
+from amplitude_collector.config import KAFKA_DSN, KAFKA_TOPIC
 from tests.resources import (
     SAMPLE_MESSAGE,
     SAMPLE_MESSAGE_LOTS_OF_EVENTS,

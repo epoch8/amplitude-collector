@@ -1,7 +1,6 @@
 import json
 from freezegun import freeze_time
 import datetime
-import pytest
 from starlette.testclient import TestClient
 
 

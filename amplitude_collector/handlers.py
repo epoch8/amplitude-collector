@@ -3,9 +3,9 @@ import logging
 from starlette import status
 from starlette.responses import Response
 
-from src.amplitude import AmplitudeRequestProcessor, RequestContentTypeError
-from src.config import DEBUG, KAFKA_TOPIC
-from src.kafka_producer import kafka_producer
+from .amplitude import AmplitudeRequestProcessor, RequestContentTypeError
+from .config import DEBUG, KAFKA_TOPIC
+from .kafka_producer import kafka_producer
 
 logger = logging.getLogger(__name__)
 

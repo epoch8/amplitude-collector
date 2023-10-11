@@ -4,7 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.routing import Route
 from starlette_exporter import PrometheusMiddleware, handle_metrics
 
-from src.handlers import collect, index
+from .handlers import collect, index
 
 app = Starlette(
     debug=True,

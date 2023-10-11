@@ -4,7 +4,7 @@ from kafka import KafkaAdminClient, KafkaProducer
 from kafka.admin import NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
-from src.config import (
+from .config import (
     CLOUD_ENV,
     KAFKA_DSN,
     KAFKA_PASSWORD,
