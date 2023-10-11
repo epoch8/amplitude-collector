@@ -47,7 +47,7 @@ def _prepare_separate_records(request, record: dict) -> List[Dict]:
 
         separate_data = record.copy()
         separate_data["ingest_uuid"] = uuid7str()
-        separate_data["e"] = orjson.dumps(event).decode("utf-8")
+        separate_data["e"] = event
         result.append(separate_data)
     return result
 
