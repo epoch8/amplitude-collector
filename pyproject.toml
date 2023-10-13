@@ -10,11 +10,11 @@ python = "^3.8"
 starlette = "^0.31.1"
 uvicorn = "^0.23.2"
 python-multipart = "^0.0.6"
-kafka-python = "^2.0.2"
 starlette-exporter = "^0.16.0"
 freezegun = "^1.2.2"
 orjson = "^3.9.7"
 uuid7 = "^0.1.0"
+aiokafka = "^0.8.1"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "*"

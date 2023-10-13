@@ -18,8 +18,8 @@ from tests.resources import (
 
 @pytest.fixture(scope="session")
 def client():
-    client = TestClient(app)
-    yield client
+    with TestClient(app) as client:
+        yield client
 
 
 @pytest.fixture(scope="session", autouse=True)

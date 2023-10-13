@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import Dict, Iterator, List
+from typing import Dict, Iterator
 import orjson
 
 from starlette import status
@@ -9,7 +9,6 @@ from starlette.responses import Response
 from uuid_extensions import uuid7str
 
 from .config import DEBUG, KAFKA_TOPIC
-from .kafka_producer import kafka_producer
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +24,10 @@ def _prepare_separate_records(request: Request, record: dict) -> Iterator[Dict]:
     if "x-real-ip" in request.headers:
         ip_address = request.headers["x-real-ip"]
     else:
-        ip_address = request.client.host
+        if request.client is not None:
+            ip_address = request.client.host
+        else:
+            ip_address = None
 
     collector_upload_time = datetime.datetime.now().isoformat()
 
@@ -60,13 +62,13 @@ async def collect(request: Request) -> Response:
         )
 
     for record in separate_records:
-        kafka_producer.send(
+        await request.state.kafka_producer.send(
             topic=KAFKA_TOPIC,
             value=orjson.dumps(record),
             key=record["ingest_uuid"].encode("utf-8"),
         )
 
-    kafka_producer.flush()
+    await request.state.kafka_producer.flush()
 
     # send_data = await AmplitudeRequestProcessor(
     #     request=request, producer=kafka_producer, topic=KAFKA_TOPIC
