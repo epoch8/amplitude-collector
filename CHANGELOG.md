@@ -5,6 +5,7 @@ Optimization:
 * Move to `orjson` for json handling
 * Increase number of workers
 * Migrate to Python 3.11
+* Async Kafka client
 
 
 Before (https://github.com/epoch8/amplitude-collector/actions/runs/6450075227/job/17509073693):
@@ -13,10 +14,10 @@ Before (https://github.com/epoch8/amplitude-collector/actions/runs/6450075227/jo
 http_req_duration..............: avg=429.41ms min=50ms    med=429.41ms max=663.29ms p(90)=445.46ms p(95)=454.04ms
 ```
 
-After (https://github.com/epoch8/amplitude-collector/actions/runs/6474463777/job/17579435194):
+After (https://github.com/epoch8/amplitude-collector/actions/runs/6506461610/job/17672039006):
 
 ```
-http_req_duration..............: avg=192.35ms min=61.13ms med=199.77ms max=343.65ms p(90)=243.79ms p(95)=259.77ms
+http_req_duration..............: avg=57.15ms  min=19.96ms med=55.79ms max=185.18ms p(90)=67.54ms p(95)=71.83ms
 ```
 
 # 0.4.0
