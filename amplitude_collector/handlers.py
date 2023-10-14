@@ -37,7 +37,7 @@ def _prepare_separate_records(request: Request, record: dict) -> Iterator[Dict]:
 
         separate_data = record.copy()
         separate_data["ingest_uuid"] = uuid7str()
-        separate_data["e"] = event
+        separate_data["e"] = orjson.dumps(event).decode("utf-8")
 
         yield separate_data
 

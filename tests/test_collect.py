@@ -25,7 +25,7 @@ def get_messages_count_from_kafka(kafka_consumer):
 
 
 def assert_kafka_msg_eq(kafka_msg, msg):
-    e = kafka_msg["e"]
+    e = json.loads(kafka_msg["e"])
     e.pop("ip_address")
     e.pop("collector_upload_time")
     e = json.dumps(e)
@@ -51,7 +51,7 @@ def test_collect_form_data(client: TestClient, kafka_consumer, generate_test_for
 
 def test_collect_unexpected_content_type(client: TestClient):
     client.headers = {"content-type": "unexpected_content_type"}  # type: ignore
-    data = {"key1": 1, "key2": "2", "key3": "test"}
+    data = {"key1": "1", "key2": "2", "key3": "test"}
     response = client.post("/collect", data=data)
     assert response.status_code == 400
 
@@ -72,7 +72,7 @@ def test_ip_address_in_message(client: TestClient, kafka_consumer, generate_test
     response = client.post("/collect", json=generate_test_json)
     assert response.status_code == 200
     kafka_msg = get_data_from_kafka(generate_test_json, kafka_consumer)
-    e = kafka_msg["e"]
+    e = json.loads(kafka_msg["e"])
     assert e["ip_address"] == "testclient"
 
 
@@ -84,7 +84,7 @@ def test_server_timestamp_in_message(
     response = client.post("/collect", json=generate_test_json)
     assert response.status_code == 200
     kafka_msg = get_data_from_kafka(generate_test_json, kafka_consumer)
-    e = kafka_msg["e"]
+    e = json.loads(kafka_msg["e"])
     assert (
         e["collector_upload_time"]
         == datetime.datetime(2023, 5, 1, 12, 0, 0).isoformat()
