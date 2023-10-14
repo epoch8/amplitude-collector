@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Test
-        run: DOCKER_BUILDKIT=1 docker compose run app pytest
+        run: DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml -f docker-compose.test.yml run test
 
       - name: Run performance benchmark
         run: DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml -f docker-compose.perf.yml run perf

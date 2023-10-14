@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  test:
+    build: .
+    environment:
+      KAFKA_DSN: redpanda:9092
+      KAFKA_USE_SSL: "False"
+      TEST_API_ENDPOINT: http://app:8000
+    volumes:
+      - .:/app
+    depends_on:
+      - app
+      - redpanda
+    command: pytest

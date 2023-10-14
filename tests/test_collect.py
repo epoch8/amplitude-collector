@@ -1,4 +1,5 @@
 import json
+import re
 from freezegun import freeze_time
 import datetime
 from starlette.testclient import TestClient
@@ -73,10 +74,11 @@ def test_ip_address_in_message(client: TestClient, kafka_consumer, generate_test
     assert response.status_code == 200
     kafka_msg = get_data_from_kafka(generate_test_json, kafka_consumer)
     e = json.loads(kafka_msg["e"])
-    assert e["ip_address"] == "testclient"
+
+    # assert e["ip_address"] matches regex of a valid ip address
+    assert re.match(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$", e["ip_address"]) is not None
 
 
-@freeze_time("2023-05-01 12:00:00")
 def test_server_timestamp_in_message(
     client: TestClient, kafka_consumer, generate_test_json
 ):
@@ -85,7 +87,7 @@ def test_server_timestamp_in_message(
     assert response.status_code == 200
     kafka_msg = get_data_from_kafka(generate_test_json, kafka_consumer)
     e = json.loads(kafka_msg["e"])
-    assert (
+
+    assert datetime.datetime.now() - datetime.datetime.fromisoformat(
         e["collector_upload_time"]
-        == datetime.datetime(2023, 5, 1, 12, 0, 0).isoformat()
-    )
+    ) < datetime.timedelta(seconds=1)
