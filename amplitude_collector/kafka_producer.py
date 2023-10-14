@@ -1,10 +1,11 @@
 import logging
+from aiokafka import AIOKafkaProducer
 
-from kafka import KafkaAdminClient, KafkaProducer
+from kafka import KafkaAdminClient
 from kafka.admin import NewTopic
 from kafka.errors import TopicAlreadyExistsError
 
-from src.config import (
+from .config import (
     CLOUD_ENV,
     KAFKA_DSN,
     KAFKA_PASSWORD,
@@ -37,6 +38,13 @@ if not KAFKA_TOPIC_CREATE:
     except TopicAlreadyExistsError as e:
         logger.error(str(e))
 
-kafka_producer = KafkaProducer(
-    bootstrap_servers=KAFKA_DSN, **KAFKA_SECURITY_PARAMS.get(CLOUD_ENV, {})
-)
+
+async def make_kafka_producer() -> AIOKafkaProducer:
+    kafka_producer = AIOKafkaProducer(
+        bootstrap_servers=KAFKA_DSN,
+        **KAFKA_SECURITY_PARAMS.get(CLOUD_ENV, {}),
+    )
+
+    await kafka_producer.start()
+
+    return kafka_producer

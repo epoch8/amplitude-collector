@@ -1,24 +1,25 @@
 [tool.poetry]
 name = "amplitude-collector"
-version = "0.4.7"
+version = "0.5.0"
 description = ""
 authors = ["Andrey Tatarinov <a@tatarinov.co>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-starlette = "^0.21.0"
-uvicorn = "^0.18.3"
-python-multipart = "^0.0.5"
-kafka-python = "^2.0.2"
-pytest = "^7.1.3"
-httpx = "^0.23.0"
-starlette-exporter = "^0.14.0"
+starlette = "^0.31.1"
+uvicorn = "^0.23.2"
+python-multipart = "^0.0.6"
+starlette-exporter = "^0.16.0"
 freezegun = "^1.2.2"
-
+orjson = "^3.9.7"
+uuid7 = "^0.1.0"
+aiokafka = "^0.8.1"
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^0.982"
+mypy = "*"
+pytest = "*"
+httpx = "*"
 
 [build-system]
 requires = ["poetry-core"]

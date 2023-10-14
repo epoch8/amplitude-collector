@@ -1,13 +1,18 @@
 import os
 import json
 from uuid import uuid4
+import orjson
 
 import pytest
 from kafka import KafkaConsumer, KafkaProducer
 from kafka.admin import ConfigResource, KafkaAdminClient
 
-from src.config import KAFKA_DSN, KAFKA_TOPIC
-from tests.resources import SAMPLE_MESSAGE, SAMPLE_MESSAGE_THREE_EVENTS
+from amplitude_collector.config import KAFKA_DSN, KAFKA_TOPIC
+from tests.resources import (
+    SAMPLE_MESSAGE,
+    SAMPLE_MESSAGE_LOTS_OF_EVENTS,
+    SAMPLE_MESSAGE_THREE_EVENTS,
+)
 
 
 @pytest.fixture(scope="session")
@@ -22,7 +27,7 @@ def client():
         client.close()
     else:
         from starlette.testclient import TestClient
-        from src.app import app
+        from amplitude_collector.app import app
 
         with TestClient(app) as client:
             yield client
@@ -83,6 +88,16 @@ def generate_test_json_three_events():
         "id": str(uuid4()),
         **SAMPLE_MESSAGE_THREE_EVENTS,
     }
+
+
+@pytest.fixture(scope="function")
+def generate_test_json_lots_of_events():
+    return orjson.dumps(
+        {
+            "id": str(uuid4()),
+            **SAMPLE_MESSAGE_LOTS_OF_EVENTS,
+        }
+    )
 
 
 @pytest.fixture(scope="function")
