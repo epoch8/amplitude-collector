@@ -1,20 +1,33 @@
+import os
 import json
 from uuid import uuid4
 
 import pytest
 from kafka import KafkaConsumer, KafkaProducer
 from kafka.admin import ConfigResource, KafkaAdminClient
-from starlette.testclient import TestClient
 
-from src.app import app
 from src.config import KAFKA_DSN, KAFKA_TOPIC
 from tests.resources import SAMPLE_MESSAGE, SAMPLE_MESSAGE_THREE_EVENTS
 
 
 @pytest.fixture(scope="session")
 def client():
-    client = TestClient(app)
-    yield client
+    if (test_endpoint := os.environ.get("TEST_API_ENDPOINT", None)) is not None:
+        import httpx
+
+        client = httpx.Client(base_url=test_endpoint)
+
+        yield client
+
+        client.close()
+    else:
+        from starlette.testclient import TestClient
+        from src.app import app
+
+        with TestClient(app) as client:
+            yield client
+
+        client.close()
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -48,8 +61,11 @@ def first_message():
 @pytest.fixture(scope="function")
 def kafka_consumer():
     consumer = KafkaConsumer(
-        KAFKA_TOPIC, bootstrap_servers=KAFKA_DSN, auto_offset_reset="earliest"
+        KAFKA_TOPIC,
+        bootstrap_servers=KAFKA_DSN,
+        # auto_offset_reset="earliest",
     )
+    consumer.poll(timeout_ms=100)
     yield consumer
 
 
