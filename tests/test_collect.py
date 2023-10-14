@@ -1,6 +1,5 @@
 import json
 import re
-from freezegun import freeze_time
 import datetime
 from starlette.testclient import TestClient
 
@@ -53,7 +52,7 @@ def test_collect_form_data(client: TestClient, kafka_consumer, generate_test_for
 
 def test_collect_unexpected_content_type(client: TestClient):
     client.headers = {"content-type": "unexpected_content_type"}  # type: ignore
-    data = {"key1": 1, "key2": "2", "key3": "test"}
+    data = {"key1": "1", "key2": "2", "key3": "test"}
     response = client.post("/collect", data=data)
     assert response.status_code == 400
 
