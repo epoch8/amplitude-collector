@@ -36,8 +36,9 @@ def test_collect_json(client: TestClient, kafka_consumer, generate_test_json):
     client.headers = {"content-type": "application/json"}  # type: ignore
     response = client.post("/collect", json=generate_test_json)
     assert response.status_code == 200
-    data_from_kafka = get_data_from_kafka(generate_test_json, kafka_consumer)
-    assert_kafka_msg_eq(data_from_kafka, generate_test_json)
+    assert_kafka_msg_eq(
+        get_data_from_kafka(generate_test_json, kafka_consumer), generate_test_json
+    )
 
 
 def test_collect_form_data(client: TestClient, kafka_consumer, generate_test_form):
