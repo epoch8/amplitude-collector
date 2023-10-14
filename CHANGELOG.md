@@ -1,4 +1,4 @@
-# WIP 0.5.0
+# 0.5.0
 
 Optimization:
 
@@ -8,16 +8,16 @@ Optimization:
 * Async Kafka client
 
 
-Before (https://github.com/epoch8/amplitude-collector/actions/runs/6450075227/job/17509073693):
+Before (https://github.com/epoch8/amplitude-collector/actions/runs/6519807027/job/17706689675):
 
 ```
-http_req_duration..............: avg=429.41ms min=50ms    med=429.41ms max=663.29ms p(90)=445.46ms p(95)=454.04ms
+http_req_duration..............: avg=493.63ms min=56.78ms med=494.23ms max=712.02ms p(90)=509.06ms p(95)=512.46ms
 ```
 
-After (https://github.com/epoch8/amplitude-collector/actions/runs/6506461610/job/17672039006):
+After (https://github.com/epoch8/amplitude-collector/actions/runs/6519815420/job/17706708157):
 
 ```
-http_req_duration..............: avg=57.15ms  min=19.96ms med=55.79ms max=185.18ms p(90)=67.54ms p(95)=71.83ms
+http_req_duration..............: avg=56.66ms  min=19.92ms med=55.81ms max=112.05ms p(90)=65.73ms  p(95)=71.53ms
 ```
 
 # 0.4.0
