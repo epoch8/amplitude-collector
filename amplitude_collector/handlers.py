@@ -70,9 +70,6 @@ async def collect(request: Request) -> Response:
 
     await request.state.kafka_producer.flush()
 
-    # send_data = await AmplitudeRequestProcessor(
-    #     request=request, producer=kafka_producer, topic=KAFKA_TOPIC
-    # ).execute()
     if DEBUG:
         print(separate_records)
         print(request.headers)
