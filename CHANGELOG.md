@@ -1,8 +1,8 @@
-# golang implementation
+# golang reimplementation
 
-Naive implementation:
+Naive implementation (https://github.com/epoch8/amplitude-collector/actions/runs/6604348203/job/17938398519):
 ```
-http_req_duration..............: avg=33.72ms  min=3.06ms  med=35.25ms max=95.07ms p(90)=45.38ms  p(95)=49.14ms
+http_req_duration..............: avg=131.23ms min=17.11ms med=113.63ms max=647.09ms p(90)=233.14ms p(95)=279.93ms
 ```
 
 # 0.5.0
