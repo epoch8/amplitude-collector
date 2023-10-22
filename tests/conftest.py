@@ -4,7 +4,7 @@ import orjson
 import json
 
 import pytest
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer, KafkaProducer
 from kafka.admin import ConfigResource, KafkaAdminClient
 
 from tests.resources import (

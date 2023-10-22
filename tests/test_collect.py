@@ -29,8 +29,8 @@ def assert_kafka_msg_eq(kafka_msg, msg):
     e = json.loads(kafka_msg["e"])
     e.pop("ip_address")
     e.pop("collector_upload_time")
-    e = json.dumps(e)
-    assert e == json.dumps(json.loads(msg["e"])[0])
+
+    assert e == json.loads(msg["e"])[0]
 
 
 def test_collect_json(client: TestClient, kafka_consumer, generate_test_json):
@@ -91,6 +91,8 @@ def test_server_timestamp_in_message(
     kafka_msg = get_data_from_kafka(generate_test_json, kafka_consumer)
     e = json.loads(kafka_msg["e"])
 
-    assert datetime.datetime.now() - datetime.datetime.fromisoformat(
-        e["collector_upload_time"]
-    ) < datetime.timedelta(seconds=1)
+    time_diff = datetime.datetime.now(
+        datetime.timezone.utc
+    ) - datetime.datetime.fromisoformat(e["collector_upload_time"])
+
+    assert time_diff < datetime.timedelta(seconds=1)
