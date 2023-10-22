@@ -91,8 +91,10 @@ def test_server_timestamp_in_message(
     kafka_msg = get_data_from_kafka(generate_test_json, kafka_consumer)
     e = json.loads(kafka_msg["e"])
 
-    time_diff = datetime.datetime.now(
-        datetime.timezone.utc
-    ) - datetime.datetime.fromisoformat(e["collector_upload_time"])
+    event_time = datetime.datetime.fromisoformat(e["collector_upload_time"])
+    if event_time.tzinfo is None:
+        event_time = event_time.replace(tzinfo=datetime.timezone.utc)
+
+    time_diff = datetime.datetime.now(datetime.timezone.utc) - event_time
 
     assert time_diff < datetime.timedelta(seconds=1)
