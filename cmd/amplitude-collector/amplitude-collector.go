@@ -114,60 +114,57 @@ func processEvent(event AmplitudeEvent, ipAddress string) error {
 }
 
 func handleCollect(w http.ResponseWriter, r *http.Request) {
+	contentType := r.Header.Get("Content-Type")
 	ipAddress := r.Header.Get("x-real-ip")
 	if ipAddress == "" {
 		ipAddress = strings.Split(r.RemoteAddr, ":")[0]
 	}
 
-	if r.Header.Get("Content-Type") == "application/json" {
+	if contentType == "application/json" {
 		log.Println("Got a JSON request")
-
-		// Read the request body and unmarshal it into an AmplitudeEvent
-		var event AmplitudeEvent
-		if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
-			log.Println("Error decoding JSON request body:", err)
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		// Process the event
-		if err := processEvent(event, ipAddress); err != nil {
-			log.Println("Error processing event:", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
+		processJSONRequest(r, ipAddress)
+		w.WriteHeader(http.StatusOK)
 		return
-	} else if r.Header.Get("Content-Type") == "application/x-www-form-urlencoded" {
-		err := r.ParseForm()
-		if err != nil {
-			log.Println("Error parsing form:", err)
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		var event AmplitudeEvent
-		decoder := schema.NewDecoder()
-		err = decoder.Decode(&event, r.Form)
-		if err != nil {
-			log.Println("Error decoding form:", err)
-			log.Println("Form:", r.Form)
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		// Process the event
-		if err := processEvent(event, ipAddress); err != nil {
-			log.Println("Error processing event:", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
+	} else if contentType == "application/x-www-form-urlencoded" {
+		log.Println("Got a form request")
+		processFormRequest(r, ipAddress)
+		w.WriteHeader(http.StatusOK)
 		return
 	} else {
 		log.Println("Got an unknown request")
 		w.WriteHeader(http.StatusBadRequest)
 		return
+	}
+}
+
+func processJSONRequest(r *http.Request, ipAddress string) {
+	var event AmplitudeEvent
+	if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
+		log.Println("Error decoding JSON request body:", err)
+		return
+	}
+
+	if err := processEvent(event, ipAddress); err != nil {
+		log.Println("Error processing event:", err)
+	}
+}
+
+func processFormRequest(r *http.Request, ipAddress string) {
+	if err := r.ParseForm(); err != nil {
+		log.Println("Error parsing form:", err)
+		return
+	}
+
+	var event AmplitudeEvent
+	decoder := schema.NewDecoder()
+	if err := decoder.Decode(&event, r.Form); err != nil {
+		log.Println("Error decoding form:", err)
+		log.Println("Form:", r.Form)
+		return
+	}
+
+	if err := processEvent(event, ipAddress); err != nil {
+		log.Println("Error processing event:", err)
 	}
 }
 
