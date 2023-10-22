@@ -1,9 +1,10 @@
 import os
 from uuid import uuid4
 import orjson
+import json
 
 import pytest
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer, KafkaProducer
 from kafka.admin import ConfigResource, KafkaAdminClient
 
 from tests.resources import (
