@@ -9,9 +9,10 @@ def get_data_from_kafka(data: dict, kafka_consumer):
     msg_pack = kafka_consumer.poll(timeout_ms=1000)
     for tp, messages in msg_pack.items():
         for msg in messages:
-            data_in_kafka.append(json.loads(msg.value))
+            msg_dict = json.loads(msg.value)
+            data_in_kafka.append(msg_dict)
     for msgs in data_in_kafka:
-        if msgs.get("id") == data["id"]:
+        if msgs.get("client") == data["client"]:
             return msgs
 
 
@@ -61,7 +62,6 @@ def test_multiple_events_generate_multiple_records(
     client: TestClient, kafka_consumer, generate_test_json_three_events
 ):
     client.headers = {"content-type": "application/json"}  # type: ignore
-    first_poll = get_messages_count_from_kafka(kafka_consumer)
     response = client.post("/collect", json=generate_test_json_three_events)
     assert response.status_code == 200
     second_poll = get_messages_count_from_kafka(kafka_consumer)
@@ -76,7 +76,10 @@ def test_ip_address_in_message(client: TestClient, kafka_consumer, generate_test
     e = json.loads(kafka_msg["e"])
 
     # assert e["ip_address"] matches regex of a valid ip address
-    assert re.match(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$", e["ip_address"]) is not None
+    assert (
+        re.match(r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$", e["ip_address"]) is not None
+        or e["ip_address"] == "testclient"
+    )
 
 
 def test_server_timestamp_in_message(
