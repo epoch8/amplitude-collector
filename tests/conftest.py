@@ -1,6 +1,7 @@
 import os
 from uuid import uuid4
 import orjson
+import json
 
 import pytest
 from kafka import KafkaConsumer
@@ -34,6 +35,21 @@ def client():
             yield client
 
         client.close()
+
+
+@pytest.fixture(scope="session", autouse=True)
+def first_message():
+    KafkaProducer(bootstrap_servers=KAFKA_DSN).send(
+        topic=KAFKA_TOPIC,
+        value=json.dumps(
+            {
+                **SAMPLE_MESSAGE,
+                "client": "1",
+            }
+        ).encode("utf-8"),
+        key=b"1",
+    )
+    yield
 
 
 @pytest.fixture(scope="session", autouse=True)
