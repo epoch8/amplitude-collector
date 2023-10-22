@@ -2,7 +2,9 @@ version: '3.7'
 
 services:
   test:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.tests
     environment:
       KAFKA_DSN: redpanda:9092
       KAFKA_USE_SSL: "False"
