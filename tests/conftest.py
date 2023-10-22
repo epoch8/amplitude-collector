@@ -37,6 +37,21 @@ def client():
 
 
 @pytest.fixture(scope="session", autouse=True)
+def first_message():
+    KafkaProducer(bootstrap_servers=KAFKA_DSN).send(
+        topic=KAFKA_TOPIC,
+        value=json.dumps(
+            {
+                **SAMPLE_MESSAGE,
+                "client": "1",
+            }
+        ).encode("utf-8"),
+        key=b"1",
+    )
+    yield
+
+
+@pytest.fixture(scope="session", autouse=True)
 def admin_client():
     admin_client = KafkaAdminClient(bootstrap_servers=KAFKA_DSN, client_id="test")
     topic_list = []
