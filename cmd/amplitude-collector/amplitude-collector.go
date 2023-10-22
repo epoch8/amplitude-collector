@@ -100,7 +100,7 @@ func processEvent(event AmplitudeEvent, ipAddress string) error {
 		}
 	}
 
-	runtimeCtx.KafkaProducer.Flush(10)
+	// runtimeCtx.KafkaProducer.Flush(10)
 
 	return nil
 }
