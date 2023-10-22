@@ -4,3 +4,4 @@ __pycache__/
 .benchmarks/
 venv/
 .env
+bin/
