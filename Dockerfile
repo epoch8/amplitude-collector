@@ -1,32 +1,20 @@
-FROM python:3.11 AS builder
+# Build golang application
+FROM golang:1.21.1 AS builder
 
-RUN mkdir /app
 WORKDIR /app
 
-RUN --mount=type=cache,target=/root/.cache pip install --upgrade pip
-RUN pip install --upgrade pip poetry
+COPY go.mod go.sum ./
+RUN go mod download
 
-COPY pyproject.toml poetry.lock ./
+COPY . .
+RUN go build -o ./bin/ ./cmd/...
 
-RUN --mount=type=cache,target=/root/.cache poetry lock --no-update
-RUN poetry export --with dev -f requirements.txt --without-hashes -o requirements.txt
+# Path: Dockerfile
+# Build final image
+FROM debian:bookworm-slim
 
-###############################################################################
-
-FROM python:3.11
-
-RUN mkdir /app
 WORKDIR /app
 
-RUN --mount=type=cache,target=/root/.cache pip install --upgrade pip
+COPY --from=builder /app/bin/ ./
 
-COPY --from=builder /app/requirements.txt .
-RUN --mount=type=cache,target=/root/.cache pip install -r requirements.txt
-
-COPY . /app
-
-EXPOSE 8000
-
-LABEL org.opencontainers.image.source https://github.com/epoch8/amplitude-collector
-
-CMD ["uvicorn", "amplitude_collector.app:app", "--host=0.0.0.0", "--proxy-headers", "--workers=4"]
+CMD ["/app/amplitude-collector"]

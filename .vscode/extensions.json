@@ -1,7 +1,5 @@
 {
     "recommendations": [
-        "ms-python.black-formatter",
-        "ms-python.isort",
         "hediet.vscode-drawio",
         "humao.rest-client",
         "mhutchie.git-graph"

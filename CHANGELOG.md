@@ -1,3 +1,10 @@
+# golang implementation
+
+Naive implementation:
+```
+http_req_duration..............: avg=33.72ms  min=3.06ms  med=35.25ms max=95.07ms p(90)=45.38ms  p(95)=49.14ms
+```
+
 # 0.5.0
 
 Optimization:
