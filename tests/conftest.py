@@ -1,18 +1,19 @@
 import os
-import json
 from uuid import uuid4
 import orjson
 
 import pytest
-from kafka import KafkaConsumer, KafkaProducer
+from kafka import KafkaConsumer
 from kafka.admin import ConfigResource, KafkaAdminClient
 
-from amplitude_collector.config import KAFKA_DSN, KAFKA_TOPIC
 from tests.resources import (
     SAMPLE_MESSAGE,
     SAMPLE_MESSAGE_LOTS_OF_EVENTS,
     SAMPLE_MESSAGE_THREE_EVENTS,
 )
+
+KAFKA_DSN = os.environ["KAFKA_DSN"]
+KAFKA_TOPIC = os.environ.get("KAFKA_TOPIC", "events")
 
 
 @pytest.fixture(scope="session")
@@ -48,21 +49,6 @@ def admin_client():
     yield
 
 
-@pytest.fixture(scope="function", autouse=True)
-def first_message():
-    KafkaProducer(bootstrap_servers=KAFKA_DSN).send(
-        topic=KAFKA_TOPIC,
-        value=json.dumps(
-            {
-                "ingest_uuid": "1",
-                **SAMPLE_MESSAGE,
-            }
-        ).encode("utf-8"),
-        key=b"1",
-    )
-    yield
-
-
 @pytest.fixture(scope="function")
 def kafka_consumer():
     consumer = KafkaConsumer(
@@ -77,16 +63,16 @@ def kafka_consumer():
 @pytest.fixture(scope="function")
 def generate_test_json():
     return {
-        "id": str(uuid4()),
         **SAMPLE_MESSAGE,
+        "client": str(uuid4()),
     }
 
 
 @pytest.fixture(scope="function")
 def generate_test_json_three_events():
     return {
-        "id": str(uuid4()),
         **SAMPLE_MESSAGE_THREE_EVENTS,
+        "client": str(uuid4()),
     }
 
 
@@ -94,8 +80,8 @@ def generate_test_json_three_events():
 def generate_test_json_lots_of_events():
     return orjson.dumps(
         {
-            "id": str(uuid4()),
             **SAMPLE_MESSAGE_LOTS_OF_EVENTS,
+            "client": str(uuid4()),
         }
     )
 
@@ -103,6 +89,6 @@ def generate_test_json_lots_of_events():
 @pytest.fixture(scope="function")
 def generate_test_form():
     return {
-        "id": str(uuid4()),
         **SAMPLE_MESSAGE,
+        "client": str(uuid4()),
     }
