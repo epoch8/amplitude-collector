@@ -9,15 +9,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gorilla/schema"
 	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
 
 type AmplitudeEvent struct {
-	Checksum      string `json:"checksum"`
-	Client        string `json:"client"`
-	EventsEncoded string `json:"e"`
-	UploadTime    string `json:"upload_time"`
-	Version       string `json:"v"`
+	Checksum      string `json:"checksum"    schema:"checksum"`
+	Client        string `json:"client"      schema:"client"`
+	EventsEncoded string `json:"e"           schema:"e"`
+	UploadTime    string `json:"upload_time" schema:"upload_time"`
+	Version       string `json:"v"           schema:"v"`
 }
 
 type RuntimeCtx struct {
@@ -125,12 +126,36 @@ func handleCollect(w http.ResponseWriter, r *http.Request) {
 		if err := processEvent(event, ipAddress); err != nil {
 			log.Println("Error processing event:", err)
 			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 
 		return
-		// } else if r.Header.Get("Content-Type") == "application/x-www-form-urlencoded" {
-		// 	log.Println("Got a form request")
-		// 	return
+	} else if r.Header.Get("Content-Type") == "application/x-www-form-urlencoded" {
+		err := r.ParseForm()
+		if err != nil {
+			log.Println("Error parsing form:", err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		var event AmplitudeEvent
+		decoder := schema.NewDecoder()
+		err = decoder.Decode(&event, r.Form)
+		if err != nil {
+			log.Println("Error decoding form:", err)
+			log.Println("Form:", r.Form)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		// Process the event
+		if err := processEvent(event, ipAddress); err != nil {
+			log.Println("Error processing event:", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		return
 	} else {
 		log.Println("Got an unknown request")
 		w.WriteHeader(http.StatusBadRequest)
