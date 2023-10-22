@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gorilla/schema"
-	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
 
 type AmplitudeEvent struct {
