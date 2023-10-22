@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
@@ -27,6 +28,7 @@ type RuntimeCtx struct {
 }
 
 var runtimeCtx *RuntimeCtx
+var kafkaMutex sync.Mutex
 
 func init() {
 	kafkaAddress := os.Getenv("KAFKA_DSN")
@@ -63,45 +65,51 @@ func processEvent(event AmplitudeEvent, ipAddress string) error {
 
 	collectorUploadTime := time.Now().UTC().Format(time.RFC3339)
 
+	var wg sync.WaitGroup
+
 	for _, e := range events {
-		e["ip_address"] = ipAddress
-		e["collector_upload_time"] = collectorUploadTime
+		wg.Add(1)
+		go func(e map[string]interface{}) {
+			defer wg.Done()
 
-		eStr, err := json.Marshal(e)
-		if err != nil {
-			return fmt.Errorf("error marshalling JSON 'e': %w", err)
-		}
+			e["ip_address"] = ipAddress
+			e["collector_upload_time"] = collectorUploadTime
 
-		msg, err := json.Marshal(
-			map[string]interface{}{
+			eStr, err := json.Marshal(e)
+			if err != nil {
+				log.Println("Error marshalling JSON 'e':", err)
+				return
+			}
+
+			msg, err := json.Marshal(map[string]interface{}{
 				"checksum":    event.Checksum,
 				"client":      event.Client,
 				"upload_time": event.UploadTime,
 				"version":     event.Version,
 				"e":           string(eStr),
-			},
-		)
-		if err != nil {
-			return fmt.Errorf("error marshalling JSON: %w", err)
-		}
+			})
+			if err != nil {
+				log.Println("Error marshalling JSON:", err)
+				return
+			}
 
-		log.Println("Producing message:", string(msg))
-
-		err = runtimeCtx.KafkaProducer.Produce(
-			&kafka.Message{
-				TopicPartition: kafka.TopicPartition{Topic: &runtimeCtx.TopicName, Partition: kafka.PartitionAny},
-				Value:          msg,
-				Key:            []byte("1"),
-			},
-			nil,
-		)
-		if err != nil {
-			return fmt.Errorf("error producing message: %w", err)
-		}
+			kafkaMutex.Lock()
+			err = runtimeCtx.KafkaProducer.Produce(
+				&kafka.Message{
+					TopicPartition: kafka.TopicPartition{Topic: &runtimeCtx.TopicName, Partition: kafka.PartitionAny},
+					Value:          msg,
+					Key:            []byte("1"),
+				},
+				nil,
+			)
+			kafkaMutex.Unlock()
+			if err != nil {
+				log.Println("Error producing message:", err)
+			}
+		}(e)
 	}
 
-	// runtimeCtx.KafkaProducer.Flush(10)
-
+	wg.Wait()
 	return nil
 }
 
