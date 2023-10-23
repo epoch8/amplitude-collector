@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -122,7 +123,16 @@ func handleCollect(w http.ResponseWriter, r *http.Request) {
 
 	if contentType == "application/json" {
 		log.Println("Got a JSON request")
-		processJSONRequest(r, ipAddress)
+
+		requestBody, err := ioutil.ReadAll(r.Body)
+		r.Body.Close()
+		if err != nil {
+			log.Println("Error reading request body:", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		go processJSONRequest(requestBody, ipAddress)
 		w.WriteHeader(http.StatusOK)
 		return
 	} else if contentType == "application/x-www-form-urlencoded" {
@@ -137,9 +147,9 @@ func handleCollect(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func processJSONRequest(r *http.Request, ipAddress string) {
+func processJSONRequest(requestBody []byte, ipAddress string) {
 	var event AmplitudeEvent
-	if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
+	if err := json.Unmarshal(requestBody, &event); err != nil {
 		log.Println("Error decoding JSON request body:", err)
 		return
 	}
