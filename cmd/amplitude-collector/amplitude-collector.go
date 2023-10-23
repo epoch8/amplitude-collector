@@ -1,16 +1,19 @@
 package main
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gorilla/schema"
+	jsoniter "github.com/json-iterator/go"
 )
 
 type AmplitudeEvent struct {
@@ -27,6 +30,8 @@ type RuntimeCtx struct {
 }
 
 var runtimeCtx *RuntimeCtx
+
+var json = jsoniter.ConfigFastest
 
 func init() {
 	kafkaAddress := os.Getenv("KAFKA_DSN")
@@ -63,103 +68,115 @@ func processEvent(event AmplitudeEvent, ipAddress string) error {
 
 	collectorUploadTime := time.Now().UTC().Format(time.RFC3339)
 
+	var wg sync.WaitGroup
+
 	for _, e := range events {
-		e["ip_address"] = ipAddress
-		e["collector_upload_time"] = collectorUploadTime
+		wg.Add(1)
+		go func(e map[string]interface{}) {
+			defer wg.Done()
 
-		eStr, err := json.Marshal(e)
-		if err != nil {
-			return fmt.Errorf("error marshalling JSON 'e': %w", err)
-		}
+			e["ip_address"] = ipAddress
+			e["collector_upload_time"] = collectorUploadTime
 
-		msg, err := json.Marshal(
-			map[string]interface{}{
+			eStr, err := json.Marshal(e)
+			if err != nil {
+				log.Println("Error marshalling JSON 'e':", err)
+				return
+			}
+
+			msg, err := json.Marshal(map[string]interface{}{
 				"checksum":    event.Checksum,
 				"client":      event.Client,
 				"upload_time": event.UploadTime,
 				"version":     event.Version,
 				"e":           string(eStr),
-			},
-		)
-		if err != nil {
-			return fmt.Errorf("error marshalling JSON: %w", err)
-		}
+			})
+			if err != nil {
+				log.Println("Error marshalling JSON:", err)
+				return
+			}
 
-		log.Println("Producing message:", string(msg))
+			err = runtimeCtx.KafkaProducer.Produce(
+				&kafka.Message{
+					TopicPartition: kafka.TopicPartition{Topic: &runtimeCtx.TopicName, Partition: kafka.PartitionAny},
+					Value:          msg,
+					Key:            []byte("1"),
+				},
+				nil,
+			)
 
-		err = runtimeCtx.KafkaProducer.Produce(
-			&kafka.Message{
-				TopicPartition: kafka.TopicPartition{Topic: &runtimeCtx.TopicName, Partition: kafka.PartitionAny},
-				Value:          msg,
-				Key:            []byte("1"),
-			},
-			nil,
-		)
-		if err != nil {
-			return fmt.Errorf("error producing message: %w", err)
-		}
+			if err != nil {
+				log.Println("Error producing message:", err)
+			}
+		}(e)
 	}
 
-	// runtimeCtx.KafkaProducer.Flush(10)
-
+	wg.Wait()
 	return nil
 }
 
 func handleCollect(w http.ResponseWriter, r *http.Request) {
+	contentType := r.Header.Get("Content-Type")
 	ipAddress := r.Header.Get("x-real-ip")
 	if ipAddress == "" {
 		ipAddress = strings.Split(r.RemoteAddr, ":")[0]
 	}
 
-	if r.Header.Get("Content-Type") == "application/json" {
+	if contentType == "application/json" {
 		log.Println("Got a JSON request")
 
-		// Read the request body and unmarshal it into an AmplitudeEvent
-		var event AmplitudeEvent
-		if err := json.NewDecoder(r.Body).Decode(&event); err != nil {
-			log.Println("Error decoding JSON request body:", err)
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		// Process the event
-		if err := processEvent(event, ipAddress); err != nil {
-			log.Println("Error processing event:", err)
+		var requestBody bytes.Buffer
+		_, err := io.Copy(&requestBody, r.Body)
+		if err != nil {
+			log.Println("Error reading request body:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		r.Body.Close()
 
+		go processJSONRequest(requestBody.Bytes(), ipAddress)
+		w.WriteHeader(http.StatusOK)
 		return
-	} else if r.Header.Get("Content-Type") == "application/x-www-form-urlencoded" {
-		err := r.ParseForm()
-		if err != nil {
-			log.Println("Error parsing form:", err)
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		var event AmplitudeEvent
-		decoder := schema.NewDecoder()
-		err = decoder.Decode(&event, r.Form)
-		if err != nil {
-			log.Println("Error decoding form:", err)
-			log.Println("Form:", r.Form)
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		// Process the event
-		if err := processEvent(event, ipAddress); err != nil {
-			log.Println("Error processing event:", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
+	} else if contentType == "application/x-www-form-urlencoded" {
+		log.Println("Got a form request")
+		processFormRequest(r, ipAddress)
+		w.WriteHeader(http.StatusOK)
 		return
 	} else {
 		log.Println("Got an unknown request")
 		w.WriteHeader(http.StatusBadRequest)
 		return
+	}
+}
+
+func processJSONRequest(requestBody []byte, ipAddress string) {
+	var event AmplitudeEvent
+	if err := json.Unmarshal(requestBody, &event); err != nil {
+		log.Println("Error decoding JSON request body:", err)
+		return
+	}
+
+	if err := processEvent(event, ipAddress); err != nil {
+		log.Println("Error processing event:", err)
+	}
+}
+
+func processFormRequest(r *http.Request, ipAddress string) {
+	if err := r.ParseForm(); err != nil {
+		log.Println("Error parsing form:", err)
+		return
+	}
+
+	var event AmplitudeEvent
+	decoder := schema.NewDecoder()
+	if err := decoder.Decode(&event, r.Form); err != nil {
+		log.Println("Error decoding form:", err)
+		log.Println("Form:", r.Form)
+		return
+	}
+
+	if err := processEvent(event, ipAddress); err != nil {
+		log.Println("Error processing event:", err)
 	}
 }
 
