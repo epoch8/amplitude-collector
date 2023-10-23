@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/gorilla/schema"
+	jsoniter "github.com/json-iterator/go"
 )
 
 type AmplitudeEvent struct {
@@ -28,7 +28,8 @@ type RuntimeCtx struct {
 }
 
 var runtimeCtx *RuntimeCtx
-var kafkaMutex sync.Mutex
+
+var json = jsoniter.ConfigFastest
 
 func init() {
 	kafkaAddress := os.Getenv("KAFKA_DSN")
@@ -93,7 +94,6 @@ func processEvent(event AmplitudeEvent, ipAddress string) error {
 				return
 			}
 
-			kafkaMutex.Lock()
 			err = runtimeCtx.KafkaProducer.Produce(
 				&kafka.Message{
 					TopicPartition: kafka.TopicPartition{Topic: &runtimeCtx.TopicName, Partition: kafka.PartitionAny},
@@ -102,7 +102,7 @@ func processEvent(event AmplitudeEvent, ipAddress string) error {
 				},
 				nil,
 			)
-			kafkaMutex.Unlock()
+
 			if err != nil {
 				log.Println("Error producing message:", err)
 			}
