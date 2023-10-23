@@ -1,8 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -124,15 +125,16 @@ func handleCollect(w http.ResponseWriter, r *http.Request) {
 	if contentType == "application/json" {
 		log.Println("Got a JSON request")
 
-		requestBody, err := ioutil.ReadAll(r.Body)
-		r.Body.Close()
+		var requestBody bytes.Buffer
+		_, err := io.Copy(&requestBody, r.Body)
 		if err != nil {
 			log.Println("Error reading request body:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		r.Body.Close()
 
-		go processJSONRequest(requestBody, ipAddress)
+		go processJSONRequest(requestBody.Bytes(), ipAddress)
 		w.WriteHeader(http.StatusOK)
 		return
 	} else if contentType == "application/x-www-form-urlencoded" {
